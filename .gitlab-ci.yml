@@ -1,0 +1,19 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - mvn clean package  # Build the project using Maven
+
+test:
+  stage: test
+  script:
+    - mvn test  # Run tests for the project using Maven
+
+deploy:
+  stage: deploy
+  script:
+    - cp /home/diarhussein/Downloads/devoteam-traineeship-petclinic/target/petclinic.war /home/diarhussein/Downloads/apache-tomcat-9.0.76/webapps/  # Copy the WAR file to Tomcat webapps directory
