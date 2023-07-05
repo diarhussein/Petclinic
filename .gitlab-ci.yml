@@ -6,14 +6,20 @@ stages:
 build:
   stage: build
   script:
-    - mvn clean package  # Build the project using Maven
+    - mvn clean package
 
 test:
   stage: test
   script:
-    - mvn test  # Run tests for the project using Maven
+    - mvn test
 
 deploy:
   stage: deploy
   script:
-    - cp /home/diarhussein/Downloads/devoteam-traineeship-petclinic/target/petclinic.war /home/diarhussein/Downloads/apache-tomcat-9.0.76/webapps/  # Copy the WAR file to Tomcat webapps directory
+    - cp /home/diarhussein/Downloads/devoteam-traineeship-petclinic/target/petclinic.war /home/diarhussein/Downloads/apache-tomcat-9.0.76/webapps/
+
+trigger_pipeline:
+  stage: trigger
+  script:
+    - "curl -X POST --fail -F token=glptt-cec56e1e2a2c2dde060cd5c690641c74142a36e0 -F ref=master https://gitlab.com/gitlab-ci1164727/petclinic.git
+    - master
