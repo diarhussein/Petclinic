@@ -26,4 +26,6 @@ trigger_pipeline:
   rules:
     - changes:
         - "**/*"
+      changes:gitlab_pipeline.status:
+        - success
 
