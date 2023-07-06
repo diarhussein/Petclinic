@@ -2,6 +2,7 @@ stages:
   - build
   - test
   - deploy
+  - trigger_pipeline
 
 build:
   stage: build
@@ -19,6 +20,9 @@ deploy:
     - cp /home/diarhussein/Downloads/devoteam-traineeship-petclinic/target/petclinic.war /home/diarhussein/Downloads/apache-tomcat-9.0.76/webapps/
 
 trigger_pipeline:
-  stage: trigger
+  stage: trigger_pipeline
   script:
-    - "curl -X POST --fail -F token=glptt-cec56e1e2a2c2dde060cd5c690641c74142a36    - masterster https://gitlab.com/gitlab-ci1164727/petclinic.git
+    - "curl -X POST --fail -F token=glptt-cec56e1e2a2c2dde060cd5c690641c74142a36e0 -F ref=master https://gitlab.com/gitlab-ci1164727/petclinic.git"
+  only:
+    - master
+
