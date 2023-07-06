@@ -27,9 +27,9 @@ trigger_pipeline:
     - changes:
         - "**/*"
       when: manual
-      except:
-        - pipelines
-      variables:
-        - key: CI_PIPELINE_SOURCE
-          value: "push"
-
+      rules:
+        - exists:
+            - $CI_COMMIT_BEFORE_SHA
+        - exists:
+            - $CI_PIPELINE_STATUS
+          when: on_success
