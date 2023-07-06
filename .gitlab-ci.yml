@@ -26,6 +26,10 @@ trigger_pipeline:
   rules:
     - changes:
         - "**/*"
-      changes:gitlab_pipeline.status:
-        - success
+      when: manual
+      except:
+        - pipelines
+      variables:
+        - key: CI_PIPELINE_SOURCE
+          value: "push"
 
