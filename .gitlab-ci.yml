@@ -26,4 +26,3 @@ trigger_pipeline:
   rules:
     - changes:
         - "**/*"
-      when: manual
