@@ -1,4 +1,4 @@
-stagges:
+stages:
   - build
   - test
   - deploy
