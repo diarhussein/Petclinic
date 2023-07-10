@@ -1,8 +1,9 @@
 stages:
+  - trigger_pipeline
   - build
   - test
   - deploy
-  - trigger_pipeline
+  
 
 trigger_pipeline:
   stage: trigger_pipeline
