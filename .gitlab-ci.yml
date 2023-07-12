@@ -1,17 +1,7 @@
 stages:
-  - trigger_pipeline
   - build
   - test
-  - deploy
-  
-
-trigger_pipeline:
-  stage: trigger_pipeline
-  script:
-    - "curl -X POST --fail -F token=glptt-cec56e1e2a2c2dde060cd5c690641c74142a36e0 -F ref=master https://gitlab.com/api/v4/projects/47392753/trigger/pipeline"
-  rules:
-    - changes:
-        - "**/*"
+  - deploy  
 
 build:
   stage: build
