@@ -4,12 +4,24 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.samples</groupId>
     <artifactId>spring-framework-petclinic</artifactId>
-    <version>5.3.8</version>
+    <version>5.3.8-SNAPSHOT</version>
 
     <name>Spring Framework Petclinic</name>
     <packaging>war</packaging>
-    <description>A Spring Framework application based on JSP, Spring MVC, Spring Data JPA, Hibernate and JDBC</description>
+    <description>A Spring Framework application based on JSP, Spring MVC, Spring Data JPA, Hibernate, and JDBC</description>
     <url>https://spring-petclinic.github.io/</url>
+
+    <!-- Add Nexus distribution management configuration -->
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <url>http://localhost:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <url>http://localhost:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
 
