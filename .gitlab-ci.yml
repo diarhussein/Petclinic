@@ -16,10 +16,10 @@ test:
 nexus_deploy:
   stage: deploy
   script:
-    - mvn deploy -Dmaven.deploy.skip=true  # Disable default deployment
-    - mvn deploy:deploy-file              # Use Maven Deploy Plugin to deploy the artifact to Nexus
-        -Durl=$Nexus_REPO_URL                  # Provide the Nexus repository URL
-        -DrepositoryId=maven-releases     # Set the Nexus repository ID (configured in your Maven settings.xml)
+    - mvn deploy -Dmaven.deploy.skip=true  
+    - mvn deploy:deploy-file              
+        -Durl=$Nexus_REPO_URL                  
+        -DrepositoryId=maven-releases     
         -Dfile=/home/diarhussein/Downloads/devoteam-traineeship-petclinic/target/petclinic.war
         -DgroupId=org.springframework.samples
         -DartifactId=spring-framework-petclinic
