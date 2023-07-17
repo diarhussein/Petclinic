@@ -23,7 +23,7 @@ nexus_deploy:
         -Dfile=/home/diarhussein/Downloads/devoteam-traineeship-petclinic/target/petclinic.war
         -DgroupId=org.springframework.samples
         -DartifactId=spring-framework-petclinic
-        -Dversion=5.3.8
+        -Dversion=5.3.9
         -Dpackaging=war
         -DgeneratePom=false
         -DuniqueVersion=false
