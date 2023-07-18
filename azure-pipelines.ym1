@@ -1,0 +1,54 @@
+trigger:
+  branches:
+    include:
+      - master
+
+stages:
+  - stage: build
+    displayName: Build
+    jobs:
+      - job: build
+        displayName: Build
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - script: |
+              mvn clean package
+            displayName: 'Build with Maven'
+        # Use the build number as the version
+        variables:
+          artifactVersion: $(Build.BuildNumber)
+
+  - stage: test
+    displayName: Test
+    jobs:
+      - job: test
+        displayName: Test
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - script: |
+              mvn test
+            displayName: 'Run Maven Tests'
+
+  - stage: deploy
+    displayName: Deploy
+    jobs:
+      - job: nexus_deploy
+        displayName: Nexus Deploy
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - script: |
+              mvn deploy -Dmaven.deploy.skip=true
+              mvn deploy:deploy-file
+                  -Durl=http://localhost:8081/repository/maven-releases/
+                  -DrepositoryId=maven-releases
+                  -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war
+                  -DgroupId=org.springframework.samples
+                  -DartifactId=spring-framework-petclinic
+                  -Dversion=$(artifactVersion) # Use the dynamically generated version
+                  -Dpackaging=war
+                  -DgeneratePom=false
+                  -DuniqueVersion=false
+            displayName: 'Nexus Deploy'
