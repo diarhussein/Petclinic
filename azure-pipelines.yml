@@ -31,6 +31,10 @@ stages:
               mvn test
             displayName: 'Run Maven Tests'
 
+- task: MavenAuthenticate@0
+  inputs:
+    mavenServiceConnections: 'Nexus-Petclinic'
+
   - stage: deploy
     displayName: Deploy
     jobs:
