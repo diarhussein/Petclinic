@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.samples</groupId>
     <artifactId>spring-framework-petclinic</artifactId>
-    <version>5.3.9-SNAPSHOT</version>
+    <version>5.3.9</version>
 
     <name>Spring Framework Petclinic</name>
     <packaging>war</packaging>
@@ -17,10 +17,6 @@
             <id>maven-releases</id>
             <url>http://localhost:8081/repository/maven-releases/</url>
         </repository>
-        <snapshotRepository>
-            <id>maven-snapshots</id>
-            <url>http://localhost:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <properties>
