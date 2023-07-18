@@ -26,7 +26,7 @@ nexus_deploy:
         -Dversion=5.3.9
         -Dpackaging=war
         -DgeneratePom=false
-        -DuniqueVersion=falsee
+        -DuniqueVersion=false
 
 deploy:
   stage: deploy
