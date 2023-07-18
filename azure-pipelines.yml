@@ -39,16 +39,10 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - script: |
-              mvn deploy -Dmaven.deploy.skip=true
-              mvn deploy:deploy-file
-                  -Durl=http://localhost:8081/repository/maven-releases/
-                  -DrepositoryId=maven-releases
-                  -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war # Use the correct path
-                  -DgroupId=org.springframework.samples
-                  -DartifactId=spring-framework-petclinic
-                  -Dversion=$(artifactVersion) # Use the dynamically generated version
-                  -Dpackaging=war
-                  -DgeneratePom=false
-                  -DuniqueVersion=false
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              goals: 'deploy'
+              options: '-DskipTests=true -Dmaven.deploy.skip=true'
+              mavenAuthenticateFeed: false
             displayName: 'Nexus Deploy'
