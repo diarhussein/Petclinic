@@ -15,22 +15,9 @@ stages:
           - script: |
               mvn clean package
             displayName: 'Build with Maven'
-        # Path to war file
         artifacts:
           - name: petclinic-war
             path: warfiles/petclinic.war
-
-  - stage: test
-    displayName: Test
-    jobs:
-      - job: test
-        displayName: Test
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - script: |
-              mvn test
-            displayName: 'Run Maven Tests'
 
   - stage: deploy
     displayName: Deploy
