@@ -15,9 +15,21 @@ stages:
           - script: |
               mvn clean package
             displayName: 'Build with Maven'
-        artifacts:
-          - name: petclinic-war
-            path: warfiles/petclinic.war
+        # Use the build number as the version
+        variables:
+          artifactVersion: $(Build.BuildNumber)
+
+  - stage: test
+    displayName: Test
+    jobs:
+      - job: test
+        displayName: Test
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - script: |
+              mvn test
+            displayName: 'Run Maven Tests'
 
   - stage: deploy
     displayName: Deploy
@@ -32,7 +44,7 @@ stages:
               mvn deploy:deploy-file
                   -Durl=http://localhost:8081/repository/maven-releases/
                   -DrepositoryId=maven-releases
-                  -Dfile=$(Build.Artifacts.path)/petclinic-war
+                  -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war # Use the correct path
                   -DgroupId=org.springframework.samples
                   -DartifactId=spring-framework-petclinic
                   -Dversion=$(artifactVersion) # Use the dynamically generated version
