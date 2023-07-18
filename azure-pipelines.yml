@@ -45,4 +45,4 @@ stages:
               goals: 'deploy'
               options: '-DskipTests=true -Dmaven.deploy.skip=true'
               mavenAuthenticateFeed: false
-            displayName: 'Nexus Deploy'd
+            displayName: 'Nexus Deploy'
