@@ -18,6 +18,10 @@ stages:
         # Use the build number as the version
         variables:
           artifactVersion: $(Build.BuildNumber)
+        # Path to war file
+        artifacts:
+          - name: petclinic-war
+            path: warfiles/petclinic.war
 
   - stage: test
     displayName: Test
@@ -44,7 +48,7 @@ stages:
               mvn deploy:deploy-file
                   -Durl=http://localhost:8081/repository/maven-releases/
                   -DrepositoryId=maven-releases
-                  -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war
+                  -Dfile=$(Build.Artifacts.path)/petclinic-war
                   -DgroupId=org.springframework.samples
                   -DartifactId=spring-framework-petclinic
                   -Dversion=$(artifactVersion) # Use the dynamically generated version
