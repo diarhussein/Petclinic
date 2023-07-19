@@ -48,7 +48,7 @@ stages:
               effectivePomSkip: false
               sonarQubeRunAnalysis: false
 
-        - script: |
+          - script: |
             mvn deploy -Dmaven.deploy.skip=true
             mvn deploy:deploy-file
                 -Durl=http://localhost:8081/repository/maven-releases/
