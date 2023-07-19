@@ -48,6 +48,10 @@ stages:
               effectivePomSkip: false
               sonarQubeRunAnalysis: false
 
+          - task: MavenAuthenticate@0
+            inputs:
+              mavenServiceConnections: 'maven-releases'
+
           - script: |
               mvn deploy -Dmaven.deploy.skip=true
               mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=5.3.8 -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
