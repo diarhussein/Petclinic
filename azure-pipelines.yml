@@ -42,7 +42,6 @@ stages:
             inputs:
               mavenPomFile: 'pom.xml'
               publishJUnitResults: true
-              testResultsFiles: 'settings.xml'
               javaHomeOption: 'JDKVersion'
               mavenVersionOption: 'Default'
               mavenAuthenticateFeed: false
