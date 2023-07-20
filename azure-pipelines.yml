@@ -1,4 +1,4 @@
-trigger:
+trigger:hjd
   branches:
     include:
       - master
