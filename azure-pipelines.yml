@@ -10,7 +10,7 @@ stages:
       - job: build
         displayName: Build
         pool:
-          vmImage: 'ubuntu-latest'
+          name: Diar
         steps:
           - script: |
               mvn clean package
@@ -24,7 +24,7 @@ stages:
       - job: test
         displayName: Test
         pool:
-          vmImage: 'ubuntu-latest'
+          name: Diar
         steps:
           - script: |
               mvn test
@@ -36,7 +36,7 @@ stages:
       - job: nexus_deploy
         displayName: Nexus Deploy
         pool:
-          vmImage: 'ubuntu-latest'
+          name: Diar
         steps:
           - task: Maven@4
             inputs:
