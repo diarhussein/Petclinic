@@ -13,7 +13,7 @@ stages:
           name: Diar
         steps:
           - script: |
-              mvn clean package
+              mvn clean package -DartifactVersion=$(Build.BuildNumber)
             displayName: 'Build with Maven'
         variables:
           artifactVersion: $(Build.BuildNumber)
@@ -27,7 +27,7 @@ stages:
           name: Diar
         steps:
           - script: |
-              mvn test
+              mvn test -DartifactVersion=$(Build.BuildNumber)
             displayName: 'Run Maven Tests'
 
   - stage: deploy
@@ -49,6 +49,6 @@ stages:
               sonarQubeRunAnalysis: false
 
           - script: |
-              mvn deploy -Dmaven.deploy.skip=true
-              mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=5.3.8 -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
+              mvn deploy -Dmaven.deploy.skip=true -DartifactVersion=$(Build.BuildNumber)
+              mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=$(Build.BuildNumber) -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
             displayName: 'Deploy to Nexus'
