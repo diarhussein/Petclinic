@@ -1,4 +1,4 @@
-trigger:cdf
+trigger:
   branches:
     include:
       - master
