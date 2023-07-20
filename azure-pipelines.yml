@@ -1,4 +1,4 @@
-trigger:cds
+trigger:
   branches:
     include:
       - master
