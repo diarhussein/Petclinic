@@ -38,6 +38,7 @@ stages:
               mvn test -DartifactVersion=$(Build.BuildNumber)
             displayName: 'Run Maven Tests'
 
+
   - stage: deploy
     displayName: Deploy
     jobs:
@@ -72,3 +73,14 @@ stages:
               mergeTestResults: true
               testRunTitle: 'JMeter Load test'
 
+          - stage: RunSeleniumTests
+              displayName: Run Selenium Tests
+              dependsOn: deploy_to_acceptance
+
+              jobs:
+              - job: RunSeleniumTestsJob
+                pool:
+                  name: Diar
+              
+                steps:
+                - script: python /home/diarhussein/Downloads/Notes/test_petclinic.py  
