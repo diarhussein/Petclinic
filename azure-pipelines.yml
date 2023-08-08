@@ -82,4 +82,5 @@ stages:
           name: Diar
               
         steps:
+          - script: pip install selenium
           - script: python /home/diarhussein/Downloads/Notes/test_petclinic.py  
