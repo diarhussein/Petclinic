@@ -63,3 +63,11 @@ stages:
               testResultsFiles: '**/TEST-*.xml'
               mergeTestResults: true
               testRunTitle: 'JMeter Load test'
+
+            schedules:
+            - cron: "48 13 * * *" 
+              displayName: Daily Load Test
+              always: true 
+              branches:
+                include:
+                - master
