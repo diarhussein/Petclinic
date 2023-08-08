@@ -4,7 +4,7 @@ trigger:
       - master
 
 schedules:
-  - cron: "54 13 * * *" 
+  - cron: "59 11 * * *" 
     displayName: Daily Load Test
     always: true 
     branches:
