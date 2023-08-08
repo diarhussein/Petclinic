@@ -3,6 +3,14 @@ trigger:
     include:
       - master
 
+            schedules:
+            - cron: "48 13 * * *" 
+              displayName: Daily Load Test
+              always: true 
+              branches:
+                include:
+                - master
+
 stages:
   - stage: build
     displayName: Build
@@ -64,10 +72,3 @@ stages:
               mergeTestResults: true
               testRunTitle: 'JMeter Load test'
 
-            schedules:
-            - cron: "48 13 * * *" 
-              displayName: Daily Load Test
-              always: true 
-              branches:
-                include:
-                - master
