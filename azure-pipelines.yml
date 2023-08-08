@@ -52,3 +52,13 @@ stages:
               mvn deploy -Dmaven.deploy.skip=true -DartifactVersion=$(Build.BuildNumber)
               mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=$(Build.SourcesDirectory)/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=$(Build.BuildNumber) -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
             displayName: 'Deploy to Nexus'
+          
+          - script: |
+              jmeter -n -t "$(Build.SourcesDirectory)src/test/jmeter/JMeter test.jmx" -l "$(Build.ArtifactStagingDirectory)/src/test/jmeter/results.jtl"
+            displayName: 'Run JMeter Tests'
+
+          - task: PublishTestResults@2
+            displayName: 'Publish JMeter Test Results'
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '$(Build.ArtifactStagingDirectory)s/rc/test/jmeter/results.jtl'
