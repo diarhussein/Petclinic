@@ -7,9 +7,9 @@ schedules:
   - cron: "50 13 * * *" 
     displayName: Daily Load Test
     always: true 
-      branches:
-       include:
-        - master
+    branches:
+      include:
+       - master
 
 stages:
   - stage: build
