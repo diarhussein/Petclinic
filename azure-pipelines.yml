@@ -3,13 +3,10 @@ trigger:
     include:
       - master
 
-            schedules:
-            - cron: "48 13 * * *" 
-              displayName: Daily Load Test
-              always: true 
-              branches:
-                include:
-                - master
+schedules:
+  - cron: "50 13 * * *" 
+    displayName: Daily Load Test
+    always: true 
 
 stages:
   - stage: build
