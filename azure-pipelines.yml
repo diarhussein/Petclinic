@@ -83,4 +83,4 @@ stages:
               
         steps:
           - script: pip install selenium
-          - script: python /home/diarhussein/Downloads/Notes/test_petclinic.py  
+          - script: python /home/diarhussein/Downloads/devoteam-traineeship-petclinic/test_petclinic.py  
