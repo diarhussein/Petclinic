@@ -54,11 +54,12 @@ stages:
             displayName: 'Deploy to Nexus'
           
           - script: |
-              jmeter -n -t "$(Build.SourcesDirectory)src/test/jmeter/JMeter test.jmx" -l "$(Build.ArtifactStagingDirectory)/src/test/jmeter/results.jtl"
+              jmeter -n -t src/test/jmeter/JMeter test.jmx
             displayName: 'Run JMeter Tests'
 
           - task: PublishTestResults@2
-            displayName: 'Publish JMeter Test Results'
             inputs:
               testResultsFormat: 'JUnit'
-              testResultsFiles: '$(Build.ArtifactStagingDirectory)s/rc/test/jmeter/results.jtl'
+              testResultsFiles: '**/TEST-*.xml'
+              mergeTestResults: true
+              testRunTitle: 'JMeter Load test'
