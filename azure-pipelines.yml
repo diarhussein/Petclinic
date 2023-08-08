@@ -54,7 +54,7 @@ stages:
             displayName: 'Deploy to Nexus'
           
           - script: |
-            /home/diarhussein/Downloads/apache-jmeter-5.6.2/bin/ -n -t /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/Jmeter test.jmx
+             /home/diarhussein/Downloads/apache-jmeter-5.6.2/bin/ -n -t /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/Jmeter test.jmx
             displayName: 'Run JMeter Tests'
 
           - task: PublishTestResults@2
