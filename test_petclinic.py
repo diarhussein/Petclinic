@@ -6,13 +6,9 @@ from selenium.webdriver.chrome.options import Options
 
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-service = ChromeService(executable_path="/usr/local/bin/chromedriver")
-driver = webdriver.Chrome(service=service)
-
-
-#chrome_options = Options()
-#chrome_option.add.argument('--headless')
-#driver = webdriver.Chrome(options=chrome_options)
+chrome_options = Options()
+chrome_option.add.argument('--headless')
+driver = webdriver.Chrome(options=chrome_options)
 
 # Navigate to the home page
 driver.get("http://localhost:8080/petclinic/")
