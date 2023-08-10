@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
 chrome_options = Options()
-chrome_option.add.argument('--headless')
+chrome_options.add.argument('--headless')
 driver = webdriver.Chrome(options=chrome_options)
 
 # Navigate to the home page
