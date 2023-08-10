@@ -11,7 +11,7 @@ class PetclinicTest(unittest.TestCase):
 
         self.service = Service(executable_path='/usr/local/bin/chromedriver')
         self.options = webdriver.ChromeOptions()
-        self.driver = webdriver.Chrome(service=self.service, options=self.options)
+        self.driver = webdriver.Chrome()
 
     def test_home_page(self):
         self.driver.get('http://localhost:8080/petclinic/')
