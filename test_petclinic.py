@@ -12,7 +12,7 @@ driver = webdriver.Chrome(service=service)
 
 #chrome_options = Options()
 #chrome_option.add.argument('--headless')
-driver = webdriver.Chrome(options=chrome_options)
+#driver = webdriver.Chrome(options=chrome_options)
 
 # Navigate to the home page
 driver.get("http://localhost:8080/petclinic/")
