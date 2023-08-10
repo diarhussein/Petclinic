@@ -17,4 +17,4 @@ class PetclinicTest(unittest.TestCase):
     def test_home_page(self):
         self.driver.get('http://localhost:8080/petclinic/')
         title = self.driver.title
-        self.assertEqual(title, "Petclinic Home Page") # Update with your actual title
+        self.assertEqual(title, "Home") # Update with your actual title
