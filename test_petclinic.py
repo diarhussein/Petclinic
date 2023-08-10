@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logging.info("Starting the script")
 
 chrome_options = Options()
-chrome_options.add_argument('--headless')
+#chrome_options.add_argument('--headless')
 driver = webdriver.Chrome(options=chrome_options)
 
 logging.info("Navigating to the home page")
