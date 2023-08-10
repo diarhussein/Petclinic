@@ -2,6 +2,7 @@ import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 class PetclinicTest(unittest.TestCase):
@@ -11,7 +12,7 @@ class PetclinicTest(unittest.TestCase):
 
         self.service = Service(executable_path='/usr/local/bin/chromedriver')
         self.options = webdriver.ChromeOptions()
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(options = self.options)
 
     def test_home_page(self):
         self.driver.get('http://localhost:8080/petclinic/')
