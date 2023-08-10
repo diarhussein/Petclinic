@@ -5,7 +5,7 @@ from selenium import webdriver
 class PetclinicTest(unittest.TestCase):
 
     def setUp(self):
-        self.driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver') # Update the path to your driver
+        self.driver = webdriver.Chrome('/usr/bin/chromedriver') # Update the path to your driver
 
     def test_home_page(self):
         self.driver.get('http://localhost:8080/petclinic/')
