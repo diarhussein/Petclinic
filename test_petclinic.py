@@ -4,6 +4,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
+from selenium.webdriver.chrome.service import Service as ChromeService
+
+service = ChromeService(executable_path="/usr/local/binchromedriver")
+driver = webdriver.Chrome(service=service)
+
+
 chrome_options = Options()
 #chrome_option.add.argument('--headless')
 driver = webdriver.Chrome(options=chrome_options)
