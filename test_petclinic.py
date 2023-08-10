@@ -1,11 +1,17 @@
 import time
 import unittest
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+
 
 class PetclinicTest(unittest.TestCase):
 
     def setUp(self):
-        self.driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver') # Update the path to your driver
+        #self.driver = webdriver.Chrome(executable_path=) # Update the path to your driver
+
+        self.service = Service(executable_path='/usr/local/bin/chromedriver')
+        self.options = webdriver.ChromeOptions()
+        self.driver = webdriver.Chrome(service=self.service, options=self.options)
 
     def test_home_page(self):
         self.driver.get('http://localhost:8080/petclinic/')
