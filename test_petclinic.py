@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-service = ChromeService(executable_path="/usr/local/binchromedriver")
+service = ChromeService(executable_path="/usr/local/bin/chromedriver")
 driver = webdriver.Chrome(service=service)
 
 
