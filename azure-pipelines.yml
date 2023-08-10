@@ -1,4 +1,4 @@
-trigger:
+trigger:d
   branches:
     include:
       - master
