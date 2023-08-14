@@ -1,4 +1,4 @@
-trigger:w
+trigger:
   branches:
     include:
       - master
