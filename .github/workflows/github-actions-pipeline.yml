@@ -8,26 +8,14 @@ on:
     - cron: '10 12 * * *'
 
 jobs:
-  setup:
-    runs-on: self-hosted
-    outputs:
-      version: ${{ steps.set_version.outputs.version }}
-    steps:
-    - name: Set Version
-      id: set_version
-      run: echo "version=$(date +'%Y%m%d').GitVersion" >> $GITHUB_OUTPUT
-
-
-
   build:
-    needs: setup
     runs-on: self-hosted
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Build with Maven
-      run: mvn clean package -DartifactVersion=${{ needs.setup.outputs.version }}
+      run: mvn clean package -DartifactVersion=${{ github.run_number }}
 
   test:
     needs: build
@@ -37,7 +25,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run Maven Tests
-      run: mvn test -DartifactVersion=${{ needs.setup.outputs.version }}
+      run: mvn test -DartifactVersion=${{ github.run_number }}
 
   deploy:
     needs: test
@@ -48,7 +36,7 @@ jobs:
 
     - name: Deploy to Nexus
       run: |
-        mvn deploy -Dmaven.deploy.skip=true -DartifactVersion=${{ needs.setup.outputs.version }}
+        mvn deploy -Dmaven.deploy.skip=true -DartifactVersion=${{ github.run_number }}
         mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=${{ github.workspace }}/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=${{ github.run_number }} -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
 
     - name: Run JMeter Tests
