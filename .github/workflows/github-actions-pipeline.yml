@@ -13,9 +13,9 @@ jobs:
     outputs:
       version: ${{ steps.set_version.outputs.version }}
     steps:
-      - name: Get Date
-        id: set_version
-        run: echo "::set-output name=version::$(date +'%Y%m%d').${{ github.run_number }}"
+    - name: Set Version
+      id: set_version
+      run: echo "VERSION=$(date +'%Y%m%d').GitVersion" >> $GITHUB_ENV
 
 
 
