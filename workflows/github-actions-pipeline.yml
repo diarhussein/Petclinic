@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
+      - masters
   schedule:
     - cron: '10 12 * * *'
 
