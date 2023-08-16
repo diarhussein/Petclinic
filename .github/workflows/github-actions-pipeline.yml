@@ -39,6 +39,16 @@ jobs:
         mvn deploy -Dmaven.deploy.skip=true -DartifactVersion=${{ github.run_number }}
         mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=${{ github.workspace }}/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=${{ github.run_number }} -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
 
+    - name: Deploy WAR to GitHub Repository
+      run: |
+        git config user.name "diarhussein"
+        git config user.email "diar.hussein@devoteam.com"
+        git checkout master
+        cp ${{ github.workspace }}/warfiles/petclinic.war warfiles/
+        git add path/where/you/want/to/store/in/repo/petclinic.war
+        git commit -m "Deploying WAR file from build ${{ github.run_number }}"
+        git push https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/diarhussein/Petclinic.git
+
     - name: Run JMeter Tests
       run: /home/diarhussein/Downloads/apache-jmeter-5.6.2/bin/jmeter -n -t /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
 
