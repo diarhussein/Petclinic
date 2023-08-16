@@ -26,7 +26,7 @@ provider "azurerm" {
 # Use the existing Resource Group name and location
 locals {
   resource_group_name = "diar_hussein-rg"
-  location            = "West Europe" # Assuming the location is West Europe; adjust if needed.
+  location            = "West Europe" 
 }
 
 # Create a Storage Account
@@ -93,7 +93,7 @@ resource "azurerm_linux_virtual_machine" "petclinic_vm" {
   
   admin_username      = var.admin_username
   admin_password      = var.admin_password
-  disable_password_authentication = false  # This line is important!
+  disable_password_authentication = false 
   
   network_interface_ids = [
     azurerm_network_interface.petclinic_NIC.id,
