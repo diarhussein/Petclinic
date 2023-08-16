@@ -9,10 +9,14 @@ terraform {
   }
 }
 
-# # Configure the Microsoft Azure provider
-# provider "azurerm" {
-#   features {}f
-# }
+variable "admin_username" {
+  description = "The admin username for the VM"
+}
+
+variable "admin_password" {
+  description = "The admin password for the VM"
+  sensitive   = true   # This ensures Terraform won't print the password in its output.
+}
 
 provider "azurerm" {
   features {}
@@ -87,8 +91,8 @@ resource "azurerm_linux_virtual_machine" "petclinic_vm" {
   location            = local.location
   size                = "Standard_DS1_v2"
   
-  admin_username      = "Diar"
-  admin_password      = "Devoteam123!"  # For security reasons, you might consider using SSH keys instead
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
   disable_password_authentication = false  # This line is important!
   
   network_interface_ids = [
