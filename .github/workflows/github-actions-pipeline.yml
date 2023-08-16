@@ -46,7 +46,7 @@ jobs:
         git checkout master
         git add warfiles/petclinic.war
         git commit -m "Deploying WAR file from build ${{ github.run_number }}"
-        git push https://${{ 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 }}@github.com/diarhussein/Petclinic.git
+        git push https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/diarhussein/Petclinic.git
 
 
     - name: Run JMeter Tests
