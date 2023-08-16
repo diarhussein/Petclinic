@@ -44,7 +44,7 @@ jobs:
         git config user.name "diarhussein"
         git config user.email "diar.hussein@devoteam.com"
         git checkout master
-        cp ${{ github.workspace }}/warfiles/petclinic.war warfiles/
+      #cp ${{ github.workspace }}/warfiles/petclinic.war warfiles/
         git add path/where/you/want/to/store/in/repo/petclinic.war
         git commit -m "Deploying WAR file from build ${{ github.run_number }}"
         git push https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/diarhussein/Petclinic.git
