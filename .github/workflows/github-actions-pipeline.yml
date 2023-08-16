@@ -45,8 +45,15 @@ jobs:
         git config user.email "diar.hussein@devoteam.com"
         git checkout master
         git add warfiles/petclinic.war
-        git commit -m "Deploying WAR file from build ${{ github.run_number }}"
-        git push https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/diarhussein/Petclinic.git
+        
+        # Check for changes
+        if ! git diff --cached --quiet; then
+          git commit -m "Deploying WAR file from build ${{ github.run_number }}"
+          git push https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/diarhussein/Petclinic.git
+        else
+          echo "No changes to commit"
+        fi
+
 
 
     - name: Run JMeter Tests
