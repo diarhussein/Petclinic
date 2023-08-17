@@ -54,7 +54,10 @@ jobs:
           echo "No changes to commit"
         fi
 
-
+  JMeter-test:
+    needs: deploy
+    runs-on: self-hosted
+    steps:
     - name: Run JMeter Tests
       run: /home/diarhussein/Downloads/apache-jmeter-5.6.2/bin/jmeter -n -t /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
 
@@ -63,6 +66,19 @@ jobs:
       with:
         name: jmeter-tests
         path: '**/TEST-*.xml'
+
+  selenium-test:
+    needs: deploy
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Selenium
+      run: pip install selenium
+
+    - name: Execute Selenium Tests
+      run: python /home/diarhussein/Downloads/devoteam-traineeship-petclinic/test_petclinic.py
 
 
   docker-build-push:
@@ -99,16 +115,3 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
       working-directory: terraform
-
-  selenium-test:
-    needs: deploy
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Install Selenium
-      run: pip install selenium
-
-    - name: Execute Selenium Tests
-      run: python /home/diarhussein/Downloads/devoteam-traineeship-petclinic/test_petclinic.py
