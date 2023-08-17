@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipelinee
 
 on:
   push:
@@ -150,5 +150,6 @@ jobs:
     - name: Execute Ansible Playbook
       env:
         ANSIBLE_HOST_KEY_CHECKING: False
-      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml
+      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa
+
 
