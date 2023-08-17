@@ -7,8 +7,8 @@
   tasks:
     - name: Install Docker.io on Debian/Ubuntu
       ansible.builtin.package:
-      name: docker.io
-      state: present
+        name: docker.io
+        state: present
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
