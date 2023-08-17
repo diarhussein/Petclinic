@@ -27,7 +27,7 @@ jobs:
     - name: Run Maven Tests
       run: mvn test -DartifactVersion=${{ github.run_number }}
 
-  deploy nexus-github:
+  deploy-nexus-github:
     needs: mvn-test
     runs-on: self-hosted
     steps:
@@ -55,7 +55,7 @@ jobs:
         fi
 
   jmeter-test:
-    needs: deploy nexus-github
+    needs: deploy-nexus-github
     runs-on: self-hosted
     steps:
     - name: Run JMeter Tests
