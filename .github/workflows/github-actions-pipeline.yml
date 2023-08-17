@@ -8,7 +8,7 @@ on:
     - cron: '10 12 * * *'
 
 jobs:
-  build:
+  mvn-build:
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -17,8 +17,8 @@ jobs:
     - name: Build with Maven
       run: mvn clean package -DartifactVersion=${{ github.run_number }}
 
-  test:
-    needs: build
+  mvn-test:
+    needs: mvn-build
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -27,8 +27,8 @@ jobs:
     - name: Run Maven Tests
       run: mvn test -DartifactVersion=${{ github.run_number }}
 
-  deploy:
-    needs: test
+  deploy nexus/github:
+    needs: mvn-test
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -54,8 +54,8 @@ jobs:
           echo "No changes to commit"
         fi
 
-  JMeter-test:
-    needs: deploy
+  jmeter-test:
+    needs: deploy nexus/github
     runs-on: self-hosted
     steps:
     - name: Run JMeter Tests
@@ -68,7 +68,7 @@ jobs:
         path: '**/TEST-*.xml'
 
   selenium-test:
-    needs: deploy
+    needs: jmeter-test
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -82,7 +82,7 @@ jobs:
 
 
   docker-build-push:
-    needs: deploy
+    needs: selenium-test
     runs-on: self-hosted
     steps:
     - name: Checkout code
