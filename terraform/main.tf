@@ -13,9 +13,9 @@ variable "admin_username" {
   description = "The admin username for the VM"
 }
 
-variable "admin_password" {
-  description = "The admin password for the VM"
-  sensitive   = true   # This ensures Terraform won't print the password in its output.
+variable "public_key_path" {
+  description = "Path to the public SSH key to be used for the VM"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 provider "azurerm" {
@@ -71,20 +71,6 @@ resource "azurerm_public_ip" "petclinic_public_ip" {
 }
 
 # Create a Network Interface
-resource "azurerm_network_interface" "petclinic_NIC" {
-  name                = "PetclinicNICtestVM"
-  location            = local.location
-  resource_group_name = local.resource_group_name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.petclinic_subnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.petclinic_public_ip.id
-  }
-}
-
-# Create a Virtual Machine
 resource "azurerm_linux_virtual_machine" "petclinic_vm" {
   name                = "PetclinicVMtestVM"
   resource_group_name = local.resource_group_name
@@ -92,8 +78,10 @@ resource "azurerm_linux_virtual_machine" "petclinic_vm" {
   size                = "Standard_DS1_v2"
   
   admin_username      = var.admin_username
-  admin_password      = var.admin_password
-  disable_password_authentication = false 
+  admin_ssh_key {
+    username   = var.admin_username
+    public_key = file("~/.ssh/id_rsa.pub")
+  }
   
   network_interface_ids = [
     azurerm_network_interface.petclinic_NIC.id,
@@ -111,5 +99,6 @@ resource "azurerm_linux_virtual_machine" "petclinic_vm" {
     version   = "latest"
   }
 }
+
 
 

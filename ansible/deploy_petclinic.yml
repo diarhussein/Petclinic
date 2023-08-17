@@ -1,0 +1,89 @@
+- name: Deploy Petclinic App on VM
+  hosts: testvm
+  become: yes
+  vars:
+    jmeter_version: 5.6.2 
+
+  tasks:
+    - name: Install Docker
+      ansible.builtin.package:
+        name: docker
+        state: present
+
+ - name: Start and enable Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull Docker image
+      command:
+        cmd: "docker pull diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      register: docker_pull
+
+    - name: Check if container is already running
+      command:
+        cmd: "docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      register: container_running
+      changed_when: false
+      ignore_errors: true
+
+    - name: Stop and remove container if it's running
+      command:
+        cmd: "docker rm -f $(docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      when: container_running.stdout != ""
+
+    - name: Run Docker container
+      command:
+        cmd: "docker run -d -p 8080:8080 diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      when: docker_pull.changed
+
+    # Install required packages for JMeter
+    - name: Install required packages
+      ansible.builtin.package:
+        name:
+          - unzip
+          - java-1.8.0-openjdk
+        state: present
+
+    # Download JMeter
+    - name: Download JMeter
+      get_url:
+        url: "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-{{ jmeter_version }}.tgz"
+        dest: "/tmp/apache-jmeter-{{ jmeter_version }}.tgz"
+        mode: '0755'
+
+    # Extract JMeter
+    - name: Extract JMeter
+      unarchive:
+        src: "/tmp/apache-jmeter-{{ jmeter_version }}.tgz"
+        dest: /opt/
+        remote_src: yes
+
+    # Ensure JMeter tests directory exists
+    - name: Ensure JMeter tests directory exists
+      ansible.builtin.file:
+        path: /opt/jmeter_tests
+        state: directory
+        mode: '0755'
+
+    # Transfer JMeter test files to VM
+    - name: Transfer JMeter test plan to VM
+      ansible.builtin.copy:
+        src: src/main/test/java/jmeter/JMetertest.jmx
+        dest: /opt/jmeter_tests/JMetertest.jmx
+
+
+    # Execute JMeter tests
+    - name: Execute JMeter tests
+      command:
+        cmd: "/opt/apache-jmeter-{{ jmeter_version }}/bin/jmeter -n -t /opt/jmeter_tests/JMetertest.jmx -l /opt/jmeter_tests/results.jtl"
+      register: jmeter_result
+
+    # Optional: Fetch JMeter test results to runner
+    - name: Fetch JMeter test results to runner
+      fetch:
+        src: /opt/jmeter_tests/results.jtl
+        dest: ./jmeter_results/results.jtl
+        flat: yes
+      when: jmeter_result is changed

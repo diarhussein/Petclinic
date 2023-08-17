@@ -121,3 +121,34 @@ jobs:
       env:
         TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+  ansible-deploy:
+    needs: terraform-apply
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Ansible
+      run: |
+        sudo apt-get update
+        sudo apt-get install ansible
+
+    - name: Setup SSH Key
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+    - name: Create Ansible Inventory
+      run: |
+        echo "[testvm]" > inventory
+        echo "4.180.200.92 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+
+    - name: Create directory for JMeter results on runner
+      run: mkdir -p ./jmeter_results/
+
+    - name: Execute Ansible Playbook
+      env:
+        ANSIBLE_HOST_KEY_CHECKING: False
+      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml
+
