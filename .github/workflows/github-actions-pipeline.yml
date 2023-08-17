@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipelinee
 
 on:
   push:
@@ -111,7 +111,13 @@ jobs:
     - name: Terraform Plan
       run: terraform plan
       working-directory: terraform
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
       working-directory: terraform
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
