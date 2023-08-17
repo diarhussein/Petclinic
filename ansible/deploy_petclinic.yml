@@ -10,7 +10,7 @@
         name: docker
         state: present
 
- - name: Start and enable Docker service
+    - name: Start and enable Docker service
       ansible.builtin.service:
         name: docker
         state: started
