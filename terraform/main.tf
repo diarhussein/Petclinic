@@ -31,7 +31,7 @@ locals {
 
 # Create a Storage Account
 resource "azurerm_storage_account" "petclinic" {
-  name                     = "petclinicsaccount"
+  name                     = "petclinicsaccounttestvm"
   resource_group_name      = local.resource_group_name
   location                 = local.location
   account_tier             = "Standard"
@@ -41,14 +41,14 @@ resource "azurerm_storage_account" "petclinic" {
 
 # Create a Storage Container
 resource "azurerm_storage_container" "petclinic" {
-  name                  = "petclinicdevops"
+  name                  = "petclinicdevopstestvm"
   storage_account_name  = azurerm_storage_account.petclinic.name
   container_access_type = "private"
 }
 
 # Create a Virtual Network
 resource "azurerm_virtual_network" "petclinic_vnet" {
-  name                = "PetclinicVNet"
+  name                = "PetclinicVNettestVM"
   resource_group_name = local.resource_group_name
   location            = local.location
   address_space       = ["10.10.0.0/16"]
@@ -56,7 +56,7 @@ resource "azurerm_virtual_network" "petclinic_vnet" {
 
 # Create a Subnet
 resource "azurerm_subnet" "petclinic_subnet" {
-  name                 = "PetclinicSubnet"
+  name                 = "PetclinicSubnettestVM"
   resource_group_name  = local.resource_group_name
   virtual_network_name = azurerm_virtual_network.petclinic_vnet.name
   address_prefixes     = ["10.10.0.0/24"]
@@ -64,7 +64,7 @@ resource "azurerm_subnet" "petclinic_subnet" {
 
 # Create a Public IP Address
 resource "azurerm_public_ip" "petclinic_public_ip" {
-  name                = "PetclinicPublicIP"
+  name                = "PetclinicPublicIPtestVM"
   location            = local.location
   resource_group_name = local.resource_group_name
   allocation_method   = "Static"
@@ -72,7 +72,7 @@ resource "azurerm_public_ip" "petclinic_public_ip" {
 
 # Create a Network Interface
 resource "azurerm_network_interface" "petclinic_NIC" {
-  name                = "PetclinicNIC"
+  name                = "PetclinicNICtestVM"
   location            = local.location
   resource_group_name = local.resource_group_name
 
@@ -86,7 +86,7 @@ resource "azurerm_network_interface" "petclinic_NIC" {
 
 # Create a Virtual Machine
 resource "azurerm_linux_virtual_machine" "petclinic_vm" {
-  name                = "PetclinicVM"
+  name                = "PetclinicVMtestVM"
   resource_group_name = local.resource_group_name
   location            = local.location
   size                = "Standard_DS1_v2"
