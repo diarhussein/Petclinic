@@ -1,4 +1,4 @@
-name: CI/CD Pipelinee
+name: CI/CD Pipeline
 
 on:
   push:
@@ -129,10 +129,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup Ansible
-      run: |
-        sudo apt-get update
-        sudo apt-get install ansible
+    # - name: Setup Ansible
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install ansible
 
     - name: Setup SSH Key
       run: |
