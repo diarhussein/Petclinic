@@ -73,12 +73,13 @@
       when: docker_pull.changed
 
     # Install required packages for JMeter
-    - name: Install required packages
+    - name: Install required packages for JMeter
       ansible.builtin.package:
         name:
           - unzip
-          - java-1.8.0-openjdk
+          - openjdk-8-jdk  # Adjusted the package name here
         state: present
+
 
     # Download JMeter
     - name: Download JMeter
