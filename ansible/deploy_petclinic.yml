@@ -5,61 +5,48 @@
     jmeter_version: 5.6.2 
 
   tasks:
-    - name: Install aptitude
+    - name: Purge all Docker packages
       apt:
-        name: aptitude
-        state: latest
-        update_cache: true
+        name:
+          - docker
+          - docker-ce
+          - docker-ce-cli
+          - docker-engine
+          - docker.io
+          - containerd
+          - runc
+        state: absent
+        purge: yes
 
-    - name: Install required system packages
+    - name: Autoremove leftover packages
       apt:
-        pkg:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-          - python3-pip
-          - virtualenv
-          - python3-setuptools
-        state: latest
-        update_cache: true
+        autoremove: yes
 
     - name: Add Docker GPG apt Key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
 
-    # Removing problematic Docker version
-    - name: Remove problematic Docker version
-      apt:
-        name: docker-ce=5:24.0.5-1~ubuntu.20.04~focal
-        state: absent
-
-    # Ensure any remnants from previous Docker installations are purged
-    - name: Remove existing Docker packages
-      apt:
-        name:
-          - docker
-          - docker-engine
-          - docker.io
-          - containerd
-          - runc
-        state: absent
-
-    - name: Add Docker Repository for Ubuntu 18.04
+    - name: Add Docker Repository
       apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
         state: present
 
-    - name: Update apt and install docker-ce
+    - name: Update apt cache
       apt:
-        name: docker-ce
+        update_cache: yes
+
+    - name: Install Docker CE without specifying a version
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
         state: latest
-        update_cache: true
 
     - name: Install Docker Module for Python
       pip:
-        name: docker
+        name: docker 
 
     - name: Start and enable Docker service
       ansible.builtin.service:
