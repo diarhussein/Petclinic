@@ -113,6 +113,11 @@
         cmd: "/opt/apache-jmeter-{{ jmeter_version }}/bin/jmeter -n -t /opt/jmeter_tests/JMetertest.jmx -l /opt/jmeter_tests/results.jtl"
       register: jmeter_result
 
+    # Display JMeter test results in pipeline output
+    - name: Display JMeter test results
+      command: cat /opt/jmeter_tests/results.jtl
+      when: jmeter_result is changed
+
     # Optional: Fetch JMeter test results to runner
     - name: Fetch JMeter test results to runner
       fetch:
@@ -120,3 +125,4 @@
         dest: ./jmeter_results/results.jtl
         flat: yes
       when: jmeter_result is changed
+
