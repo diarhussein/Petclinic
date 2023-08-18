@@ -102,11 +102,10 @@
         state: directory
         mode: '0755'
 
-    # Transfer JMeter test files to VM
     - name: Transfer JMeter test plan to VM
-      ansible.builtin.copy:
-        src: src/main/test/java/jmeter/JMetertest.jmx
-        dest: /opt/jmeter_tests/JMetertest.jmx
+    ansible.builtin.copy:
+      src: /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
+      dest: /opt/jmeter_tests/JMetertest.jmx
 
     # Execute JMeter tests
     - name: Execute JMeter tests
