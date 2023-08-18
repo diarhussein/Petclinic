@@ -5,22 +5,24 @@
     jmeter_version: 5.6.2 
 
   tasks:
-    - name: Purge all Docker packages
+    - name: Install aptitude
       apt:
-        name:
-          - docker
-          - docker-ce
-          - docker-ce-cli
-          - docker-engine
-          - docker.io
-          - containerd
-          - runc
-        state: absent
-        purge: yes
+        name: aptitude
+        state: latest
+        update_cache: true
 
-    - name: Autoremove leftover packages
+    - name: Install required system packages
       apt:
-        autoremove: yes
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
 
     - name: Add Docker GPG apt Key
       apt_key:
@@ -29,24 +31,18 @@
 
     - name: Add Docker Repository
       apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
         state: present
 
-    - name: Update apt cache
+    - name: Update apt and install docker-ce
       apt:
-        update_cache: yes
-
-    - name: Install Docker CE without specifying a version
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
+        name: docker-ce
         state: latest
+        update_cache: true
 
     - name: Install Docker Module for Python
       pip:
-        name: docker 
+        name: docker
 
     - name: Start and enable Docker service
       ansible.builtin.service:
