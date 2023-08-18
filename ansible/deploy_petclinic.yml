@@ -1,4 +1,4 @@
-- hosts: self_hosted
+- hosts: testvm
 
 - name: Deploy Petclinic App on VM
   hosts: testvm
