@@ -1,3 +1,5 @@
+- hosts: self_hosted
+
 - name: Deploy Petclinic App on VM
   hosts: testvm
   become: yes
@@ -108,6 +110,7 @@
         dest: /opt/jmeter_tests/JMetertest.jmx
 
     # Execute JMeter tests
+    # Execute JMeter tests
     - name: Execute JMeter tests
       command:
         cmd: "/opt/apache-jmeter-{{ jmeter_version }}/bin/jmeter -n -t /opt/jmeter_tests/JMetertest.jmx -l /opt/jmeter_tests/results.jtl"
@@ -116,13 +119,18 @@
     # Display JMeter test results in pipeline output
     - name: Display JMeter test results
       command: cat /opt/jmeter_tests/results.jtl
+      register: jmeter_output
+      when: jmeter_result is changed
+
+    - debug:
+        var: jmeter_output.stdout_lines
       when: jmeter_result is changed
 
     # Optional: Fetch JMeter test results to runner
     - name: Fetch JMeter test results to runner
       fetch:
         src: /opt/jmeter_tests/results.jtl
-        dest: ./jmeter_results/results.jtl
+        dest: /home/diarhussein/Downloads/results/results.jtl
         flat: yes
       when: jmeter_result is changed
 
