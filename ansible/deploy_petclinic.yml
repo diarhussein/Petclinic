@@ -55,17 +55,17 @@
         cmd: "docker pull diarhussein/petclinic:{{ docker_tag | default('latest') }}"
       register: docker_pull
 
-    - name: Check if container is already running
-      command:
-        cmd: "docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
-      register: container_running
-      changed_when: false
-      ignore_errors: true
+    # - name: Check if container is already running
+    #   command:
+    #     cmd: "docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+    #   register: container_running
+    #   changed_when: false
+    #   ignore_errors: true
 
-    - name: Stop and remove container if it's running
-      command:
-        cmd: "docker rm -f $(docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
-      when: container_running.stdout != ""
+    # - name: Stop and remove container if it's running
+    #   command:
+    #     cmd: "docker rm -f $(docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+    #   when: container_running.stdout != ""
 
     - name: Run Docker container
       command:
@@ -107,7 +107,6 @@
       ansible.builtin.copy:
         src: src/main/test/java/jmeter/JMetertest.jmx
         dest: /opt/jmeter_tests/JMetertest.jmx
-
 
     # Execute JMeter tests
     - name: Execute JMeter tests
