@@ -103,9 +103,9 @@
         mode: '0755'
 
     - name: Transfer JMeter test plan to VM
-    ansible.builtin.copy:
-      src: /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
-      dest: /opt/jmeter_tests/JMetertest.jmx
+      ansible.builtin.copy:
+        src: /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
+        dest: /opt/jmeter_tests/JMetertest.jmx
 
     # Execute JMeter tests
     - name: Execute JMeter tests
