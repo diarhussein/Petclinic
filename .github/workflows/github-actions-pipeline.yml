@@ -128,7 +128,7 @@ jobs:
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
   ansible-deploy:
-    needs: terraform-apply
+    needs: terraform-apply-test-vm
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -158,7 +158,7 @@ jobs:
       run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa
 
   terraform-apply-acceptance-vm:
-    needs: docker-build-push
+    needs: ansible-deploy
     runs-on: self-hosted
     steps:
     - name: Checkout code
