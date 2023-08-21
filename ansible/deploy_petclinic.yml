@@ -144,3 +144,74 @@
       when: jmeter_result is changed
       tags: 
         - jmeter
+
+# ... [the previous parts of your playbook]
+
+# Selenium Tests for acceptance VM
+- name: Execute Selenium tests on Acceptance VM
+  hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
+  become: yes
+  tasks:
+    # Ensure required packages for Selenium are installed (e.g., Docker)
+    - name: Install required packages for Selenium
+      ansible.builtin.package:
+        name:
+          - docker
+        state: present
+      tags:
+        - selenium
+    
+    # Pull Docker image for Selenium tests
+    - name: Pull Docker image for Selenium tests
+      command:
+        cmd: "docker pull diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      register: selenium_docker_pull
+      tags:
+        - selenium
+
+    # Ensure Selenium test directory exists
+    - name: Ensure Selenium tests directory exists
+      ansible.builtin.file:
+        path: /opt/selenium_tests
+        state: directory
+        mode: '0755'
+      tags: 
+        - selenium
+
+    # Transfer Selenium test script to VM
+    - name: Transfer Selenium test script to VM
+      ansible.builtin.copy:
+        src: /home/diarhussein/Downloads/devoteam-traineeship-petclinic/test_petclinic.py
+        dest: /opt/selenium_tests/test_petclinic.py
+      tags: 
+        - selenium
+
+    # Execute Selenium tests using Docker
+    - name: Run Docker container and execute Selenium tests
+      command:
+        cmd: "docker run -d -v /opt/selenium_tests:/tests diarhussein/petclinic:{{ docker_tag | default('latest') }} python /tests/test_petclinic.py"
+      when: selenium_docker_pull.changed
+      tags:
+        - selenium
+
+    # Assuming the test script outputs results to a file, you can display and fetch them similar to JMeter:
+    # Display Selenium test results in pipeline output
+    - name: Display Selenium test results
+      command: cat /opt/selenium_tests/results.txt  # Assuming test results are written to this file
+      register: selenium_output
+      tags:
+        - selenium
+
+    - debug:
+        var: selenium_output.stdout_lines
+      tags:
+        - selenium
+
+    # Optional: Fetch Selenium test results to runner
+    - name: Fetch Selenium test results to runner
+      fetch:
+        src: /opt/selenium_tests/results.txt  # Modify if your test results are stored in a different path
+        dest: /home/diarhussein/Downloads/results/selenium_results.txt
+        flat: yes
+      tags:
+        - selenium
