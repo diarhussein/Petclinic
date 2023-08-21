@@ -153,9 +153,6 @@
 - name: Execute Selenium tests on Acceptance VM
   hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
   become: yes
-  vars:
-    desired_chrome_version: "114.0.5735.90"
-    desired_chromedriver_version: "114.0.5735.90"  # Typically, this matches the Chrome version.
 
   tasks:
     # Add Docker GPG apt Key (if not added in a previous step)
@@ -239,10 +236,11 @@
 
     - name: Install Google Chrome
       apt:
-        name: "google-chrome-stable={{ desired_chrome_version }}"
+        name: google-chrome-stable
         state: present
       tags:
         - selenium
+
 
 
     # - name: Get Chrome version
