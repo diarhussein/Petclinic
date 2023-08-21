@@ -153,7 +153,8 @@
 - name: Execute Selenium tests on Acceptance VM
   hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
   become: yes
-
+  vars:
+    desired_chromedriver_version: "116.0.5845.96"
   tasks:
     # Add Docker GPG apt Key (if not added in a previous step)
     - name: Add Docker GPG apt Key for Selenium tests
