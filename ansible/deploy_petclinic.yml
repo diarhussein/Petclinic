@@ -248,13 +248,21 @@
       tags:
         - selenium
 
+    - name: Get ChromeDriver version that matches installed Chrome
+      command:
+        cmd: "curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{{ chrome_version.stdout }}"
+      register: chromedriver_version
+      tags:
+        - selenium
+
     - name: Download ChromeDriver
       get_url:
-        url: "https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{{ chrome_version.stdout }})/chromedriver_linux64.zip"
+        url: "https://chromedriver.storage.googleapis.com/{{ chromedriver_version.stdout }}/chromedriver_linux64.zip"
         dest: "/tmp/chromedriver_linux64.zip"
         mode: '0755'
       tags:
         - selenium
+
 
     - name: Unzip ChromeDriver
       unarchive:
