@@ -219,6 +219,59 @@
       tags:
         - selenium
 
+    - name: Add Google Chrome's official APT key
+      apt_key:
+        url: https://dl.google.com/linux/linux_signing_key.pub
+        state: present
+      tags:
+        - selenium
+
+    - name: Add Google Chrome's official APT repo
+      apt_repository:
+        repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
+        state: present
+      tags:
+        - selenium
+
+    - name: Install Google Chrome
+      apt:
+        name: google-chrome-stable
+        state: latest
+        update_cache: yes
+      tags:
+        - selenium
+
+    - name: Get Chrome version
+      command:
+        cmd: google-chrome --version | awk '{print $3}' | cut -d'.' -f1
+      register: chrome_version
+      tags:
+        - selenium
+
+    - name: Download ChromeDriver
+      get_url:
+        url: "https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{{ chrome_version.stdout }})/chromedriver_linux64.zip"
+        dest: "/tmp/chromedriver_linux64.zip"
+        mode: '0755'
+      tags:
+        - selenium
+
+    - name: Unzip ChromeDriver
+      unarchive:
+        src: "/tmp/chromedriver_linux64.zip"
+        dest: "/usr/bin"
+        remote_src: yes
+      tags:
+        - selenium
+
+    - name: Make ChromeDriver executable
+      ansible.builtin.file:
+        path: /usr/bin/chromedriver
+        mode: '0755'
+      tags:
+        - selenium
+
+
     # Transfer Selenium test script to VM
     - name: Transfer Selenium test script to VM
       ansible.builtin.copy:
