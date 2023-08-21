@@ -204,6 +204,21 @@
       tags:
         - selenium
 
+    - name: Ensure pip3 is installed
+      apt:
+        name: python3-pip
+        state: latest
+        update_cache: yes
+      tags:
+        - selenium
+
+    - name: Install selenium Python package
+      pip:
+        name: selenium
+        executable: pip3
+      tags:
+        - selenium
+
     # Transfer Selenium test script to VM
     - name: Transfer Selenium test script to VM
       ansible.builtin.copy:
