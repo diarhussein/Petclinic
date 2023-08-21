@@ -153,6 +153,10 @@
 - name: Execute Selenium tests on Acceptance VM
   hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
   become: yes
+  vars:
+  desired_chrome_version: "114.0.5735.90"
+  desired_chromedriver_version: "114.0.5735.90"  # Typically, this matches the Chrome version.
+
   tasks:
     # Add Docker GPG apt Key (if not added in a previous step)
     - name: Add Docker GPG apt Key for Selenium tests
@@ -235,29 +239,29 @@
 
     - name: Install Google Chrome
       apt:
-        name: google-chrome-stable
-        state: latest
-        update_cache: yes
+        name: "google-chrome-stable={{ desired_chrome_version }}"
+        state: present
       tags:
         - selenium
 
-    - name: Get Chrome version
-      command:
-        cmd: google-chrome --version | awk '{print $3}' | cut -d'.' -f1
-      register: chrome_version
-      tags:
-        - selenium
 
-    - name: Get ChromeDriver version that matches installed Chrome
-      command:
-        cmd: "curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{{ chrome_version.stdout }}"
-      register: chromedriver_version
-      tags:
-        - selenium
+    # - name: Get Chrome version
+    #   command:
+    #     cmd: google-chrome --version | awk '{print $3}' | cut -d'.' -f1
+    #   register: chrome_version
+    #   tags:
+    #     - selenium
+
+    # - name: Get ChromeDriver version that matches installed Chrome
+    #   command:
+    #     cmd: "curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{{ chrome_version.stdout }}"
+    #   register: chromedriver_version
+    #   tags:
+    #     - selenium
 
     - name: Download ChromeDriver
       get_url:
-        url: "https://chromedriver.storage.googleapis.com/{{ chromedriver_version.stdout }}/chromedriver_linux64.zip"
+        url: "https://chromedriver.storage.googleapis.com/{{ desired_chromedriver_version }}/chromedriver_linux64.zip"
         dest: "/tmp/chromedriver_linux64.zip"
         mode: '0755'
       tags:
