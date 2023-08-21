@@ -127,7 +127,7 @@ jobs:
         TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-  ansible-deploy:
+  ansible-deploy-jmeter:
     needs: terraform-apply-test-vm
     runs-on: self-hosted
     steps:
@@ -152,13 +152,13 @@ jobs:
     - name: Create directory for JMeter results on runner
       run: mkdir -p ./jmeter_results/
 
-    - name: Execute Ansible Playbook
+    - name: Execute Ansible Playbook for JMeter tests
       env:
         ANSIBLE_HOST_KEY_CHECKING: False
-      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa
+      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags jmeter
 
   terraform-apply-acceptance-vm:
-    needs: ansible-deploy
+    needs: ansible-deploy-jmeter
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -181,3 +181,25 @@ jobs:
       env:
         TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+  ansible-deploy-selenium:
+    needs: terraform-apply-acceptance-vm
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup SSH Key for Acceptance VM
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+    - name: Create Ansible Inventory for Acceptance VM
+      run: |
+        echo "[acceptancevm]" > inventory
+        echo "20.16.255.226 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+
+    - name: Execute Ansible Playbook for Selenium Tests
+      env:
+        ANSIBLE_HOST_KEY_CHECKING: False
+      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags selenium
