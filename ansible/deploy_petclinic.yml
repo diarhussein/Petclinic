@@ -1,11 +1,13 @@
-- hosts: testvm
+# - hosts: testvm
 
 - name: Deploy Petclinic App on VM
   hosts: testvm
   become: yes
   vars:
     jmeter_version: 5.6.2 
-
+      tags: 
+        - jmeter
+        
   tasks:
     - name: Install aptitude
       apt:
@@ -152,12 +154,28 @@
   hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
   become: yes
   tasks:
-    # Ensure required packages for Selenium are installed (e.g., Docker)
-    - name: Install required packages for Selenium
-      ansible.builtin.package:
-        name:
-          - docker
+    # Add Docker GPG apt Key (if not added in a previous step)
+    - name: Add Docker GPG apt Key for Selenium tests
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
         state: present
+      tags:
+        - selenium
+
+    # Add Docker Repository (if not added in a previous step)
+    - name: Add Docker Repository for Selenium tests
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+      tags:
+        - selenium
+    
+    # Install Docker CE
+    - name: Update apt and install docker-ce for Selenium tests
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
       tags:
         - selenium
     
