@@ -196,6 +196,14 @@
       tags: 
         - selenium
 
+    - name: Ensure Python3 is installed on the VM
+      apt:
+        name: python3
+        state: latest
+        update_cache: yes
+      tags:
+        - selenium
+
     # Transfer Selenium test script to VM
     - name: Transfer Selenium test script to VM
       ansible.builtin.copy:
@@ -205,10 +213,10 @@
         - selenium
 
     # Execute Selenium tests using Docker
-    - name: Run Docker container and execute Selenium tests
+    - name: Execute Selenium test using Python3 on VM
       command:
-        cmd: "docker run -d -v /opt/selenium_tests:/tests diarhussein/petclinic:{{ docker_tag | default('latest') }} python /tests/test_petclinic.py"
-      when: selenium_docker_pull.changed
+        cmd: "python3 /opt/selenium_tests/test_petclinic.py"
+      register: selenium_test_result
       tags:
         - selenium
 
