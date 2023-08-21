@@ -11,6 +11,8 @@ logging.info("Starting the script")
 
 chrome_options = Options()
 chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')        # Add this line
+chrome_options.add_argument('--disable-dev-shm-usage')  # Add this line
 driver = webdriver.Chrome(options=chrome_options)
 
 logging.info("Navigating to the home page")
