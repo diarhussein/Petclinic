@@ -81,7 +81,8 @@
           - unzip
           - openjdk-8-jdk  # Adjusted the package name here
         state: present
-
+      tags: 
+        - jmeter
 
     # Download JMeter
     - name: Download JMeter
@@ -89,43 +90,51 @@
         url: "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-{{ jmeter_version }}.tgz"
         dest: "/tmp/apache-jmeter-{{ jmeter_version }}.tgz"
         mode: '0755'
-
+      tags: 
+        - jmeter
     # Extract JMeter
     - name: Extract JMeter
       unarchive:
         src: "/tmp/apache-jmeter-{{ jmeter_version }}.tgz"
         dest: /opt/
         remote_src: yes
-
+      tags: 
+        - jmeter
     # Ensure JMeter tests directory exists
     - name: Ensure JMeter tests directory exists
       ansible.builtin.file:
         path: /opt/jmeter_tests
         state: directory
         mode: '0755'
+      tags: 
+        - jmeter
 
     - name: Transfer JMeter test plan to VM
       ansible.builtin.copy:
         src: /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
         dest: /opt/jmeter_tests/JMetertest.jmx
-
+      tags: 
+        - jmeter
     # Execute JMeter tests
     # Execute JMeter tests
     - name: Execute JMeter tests
       command:
         cmd: "/opt/apache-jmeter-{{ jmeter_version }}/bin/jmeter -n -t /opt/jmeter_tests/JMetertest.jmx -l /opt/jmeter_tests/results.jtl"
       register: jmeter_result
-
+      tags: 
+        - jmeter
     # Display JMeter test results in pipeline output
     - name: Display JMeter test results
       command: cat /opt/jmeter_tests/results.jtl
       register: jmeter_output
       when: jmeter_result is changed
-
+      tags: 
+        - jmeter
     - debug:
         var: jmeter_output.stdout_lines
       when: jmeter_result is changed
-
+      tags: 
+        - jmeter
     # Optional: Fetch JMeter test results to runner
     - name: Fetch JMeter test results to runner
       fetch:
@@ -133,4 +142,5 @@
         dest: /home/diarhussein/Downloads/results/results.jtl
         flat: yes
       when: jmeter_result is changed
-
+      tags: 
+        - jmeter
