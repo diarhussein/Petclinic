@@ -102,27 +102,27 @@ jobs:
         docker push diarhussein/petclinic:latest
 
 
-  terraform-apply:
+  terraform-apply-test-vm:
     needs: docker-build-push
     runs-on: self-hosted
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Terraform Init
+    - name: Terraform Init for Test VM
       run: terraform init
-      working-directory: terraform
+      working-directory: terraform/test_vm
 
-    - name: Terraform Plan
+    - name: Terraform Plan for Test VM
       run: terraform plan
-      working-directory: terraform
+      working-directory: terraform/test_vm
       env:
         TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-    - name: Terraform Apply
+    - name: Terraform Apply for Test VM
       run: terraform apply -auto-approve
-      working-directory: terraform
+      working-directory: terraform/test_vm
       env:
         TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
@@ -157,4 +157,27 @@ jobs:
         ANSIBLE_HOST_KEY_CHECKING: False
       run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa
 
+  terraform-apply-acceptance-vm:
+    needs: docker-build-push
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
+    - name: Terraform Init for Acceptance VM
+      run: terraform init
+      working-directory: terraform/acceptance_vm
+
+    - name: Terraform Plan for Acceptance VM
+      run: terraform plan
+      working-directory: terraform/acceptance_vm
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+    - name: Terraform Apply for Acceptance VM
+      run: terraform apply -auto-approve
+      working-directory: terraform/acceptance_vm
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
