@@ -1,5 +1,3 @@
-# - hosts: testvm
-
 - name: Deploy Petclinic App on VM
   hosts: testvm
   become: yes
@@ -147,8 +145,6 @@
       tags: 
         - jmeter
 
-# ... [the previous parts of your playbook]
-
 # Selenium Tests for acceptance VM
 - name: Execute Selenium tests on Acceptance VM
   hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
@@ -241,36 +237,11 @@
       tags:
         - selenium
 
-
-
-    # - name: Get Chrome version
-    #   command:
-    #     cmd: google-chrome --version | awk '{print $3}' | cut -d'.' -f1
-    #   register: chrome_version
-    #   tags:
-    #     - selenium
-
-    # - name: Get ChromeDriver version that matches installed Chrome
-    #   command:
-    #     cmd: "curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{{ chrome_version.stdout }}"
-    #   register: chromedriver_version
-    #   tags:
-    #     - selenium
-
     - name: Download ChromeDriver
       get_url:
         url: "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip"
         dest: "/tmp/chromedriver_linux64.zip"
         mode: '0755'
-      tags:
-        - selenium
-
-
-    - name: Unzip ChromeDriver
-      unarchive:
-        src: "/tmp/chromedriver_linux64.zip"
-        dest: "/usr/bin"
-        remote_src: yes
       tags:
         - selenium
 
@@ -281,13 +252,20 @@
       tags:
         - selenium
 
+    - name: Unzip ChromeDriver
+      unarchive:
+        src: "/tmp/chromedriver_linux64.zip"
+        dest: "/usr/bin"
+        remote_src: yes
+      tags:
+        - selenium
+
     - name: Make ChromeDriver executable
       ansible.builtin.file:
         path: /usr/bin/chromedriver
         mode: '0755'
       tags:
         - selenium
-
 
     # Transfer Selenium test script to VM
     - name: Transfer Selenium test script to VM
