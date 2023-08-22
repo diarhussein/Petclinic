@@ -262,7 +262,7 @@
 
     - name: Make ChromeDriver executable
       ansible.builtin.file:
-        path: /usr/bin/chromedriver
+        path: /usr/bin/chromedriver_linux64/chromedriver
         mode: '0755'
       tags:
         - selenium
