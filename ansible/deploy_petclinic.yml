@@ -272,6 +272,13 @@
       tags:
         - selenium
 
+    - name: Install unzip utility
+      apt:
+        name: unzip
+        state: present
+      tags:
+        - selenium
+
     - name: Unzip ChromeDriver
       unarchive:
         src: "/tmp/chromedriver_linux64.zip"
@@ -280,16 +287,17 @@
       tags:
         - selenium
 
-    - name: Install unzip utility
-      apt:
-        name: unzip
-        state: present
-      tags:
-        - selenium
+    - name: List files in /usr/bin
+      command: ls /usr/bin
+      register: bin_contents
+
+    - debug:
+        var: bin_contents.stdout_lines
+
 
     - name: Make ChromeDriver executable
       ansible.builtin.file:
-        path: /usr/bin/chromedriver
+        path: /usr/bin/chromedriver_linux64/chromedriver
         mode: '0755'
       tags:
         - selenium
