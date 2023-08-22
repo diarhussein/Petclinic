@@ -299,7 +299,7 @@
     - debug:
         var: selenium_output.stdout_lines
 
-Web App Deployment for production VM
+# Web App Deployment for production VM
 - name: Deploy Petclinic Web App on Production VM
   hosts: productionvm 
   become: yes
