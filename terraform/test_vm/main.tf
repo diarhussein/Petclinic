@@ -36,21 +36,28 @@ resource "azurerm_storage_account" "petclinic" {
   location                 = local.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
-
 # Create a Storage Container
 resource "azurerm_storage_container" "petclinic" {
   name                  = "petclinicdevopstestvm"
   storage_account_name  = azurerm_storage_account.petclinic.name
   container_access_type = "private"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
-
 # Create a Virtual Network
 resource "azurerm_virtual_network" "petclinic_vnet" {
   name                = "PetclinicVNettestVM"
   resource_group_name = local.resource_group_name
   location            = local.location
   address_space       = ["10.10.0.0/16"]
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Create a Subnet
@@ -59,6 +66,9 @@ resource "azurerm_subnet" "petclinic_subnet" {
   resource_group_name  = local.resource_group_name
   virtual_network_name = azurerm_virtual_network.petclinic_vnet.name
   address_prefixes     = ["10.10.0.0/24"]
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Create a Public IP Address
@@ -67,6 +77,9 @@ resource "azurerm_public_ip" "petclinic_public_ip" {
   location            = local.location
   resource_group_name = local.resource_group_name
   allocation_method   = "Static"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Create a Network Interface
@@ -80,6 +93,9 @@ resource "azurerm_network_interface" "petclinic_NIC" {
     subnet_id                     = azurerm_subnet.petclinic_subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.petclinic_public_ip.id
+  }
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
@@ -112,67 +128,3 @@ resource "azurerm_linux_virtual_machine" "petclinic_vm" {
     version   = "latest"
   }
 }
-
-# ... [Your previous code remains unchanged]
-
-# Create a Storage Account
-resource "azurerm_storage_account" "petclinic" {
-  # ... [Your previous code remains unchanged]
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-# Create a Storage Container
-resource "azurerm_storage_container" "petclinic" {
-  # ... [Your previous code remains unchanged]
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-# Create a Virtual Network
-resource "azurerm_virtual_network" "petclinic_vnet" {
-  # ... [Your previous code remains unchanged]
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-# Create a Subnet
-resource "azurerm_subnet" "petclinic_subnet" {
-  # ... [Your previous code remains unchanged]
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-# Create a Public IP Address
-resource "azurerm_public_ip" "petclinic_public_ip" {
-  # ... [Your previous code remains unchanged]
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-# Create a Network Interface
-resource "azurerm_network_interface" "petclinic_NIC" {
-  # ... [Your previous code remains unchanged]
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-# Create a Virtual Machine
-resource "azurerm_linux_virtual_machine" "petclinic_vm" {
-  # ... [Your previous code remains unchanged]
-  # No lifecycle block added here since you requested to exclude the VM
-}
-
-
