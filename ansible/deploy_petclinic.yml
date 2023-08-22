@@ -153,8 +153,7 @@
 - name: Execute Selenium tests on Acceptance VM
   hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
   become: yes
-  vars:
-    desired_chromedriver_version: "116.0.5845.96"
+
   tasks:
     # Add Docker GPG apt Key (if not added in a previous step)
     - name: Add Docker GPG apt Key for Selenium tests
@@ -260,7 +259,7 @@
 
     - name: Download ChromeDriver
       get_url:
-        url: "https://chromedriver.storage.googleapis.com/{{ desired_chromedriver_version }}/chromedriver_linux64.zip"
+        url: "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip"
         dest: "/tmp/chromedriver_linux64.zip"
         mode: '0755'
       tags:
