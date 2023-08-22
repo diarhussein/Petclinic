@@ -246,24 +246,25 @@ jobs:
         ANSIBLE_HOST_KEY_CHECKING: False
       run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags webappdeploy
   
-  # terraform-destroy-testvm:
-  #   needs: ansible-deploy-production-vm
-  #   runs-on: self-hosted
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v2
-  
-  #   - name: Setup Terraform
-  #     uses: hashicorp/setup-terraform@v1
-  
-  #   - name: Terraform Initialize
-  #     run: terraform init
-  #     working-directory: terraform/test_vm
-  
-  #   - name: Terraform Destroy
-  #     run: terraform destroy -auto-approve
-  #     working-directory: terraform/test_vm
-  #     env:
-  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  terraform-destroy-testvm:
+    needs: ansible-deploy-production-vm
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Initialize
+      run: terraform init
+      working-directory: terraform/test_vm
+
+    - name: Terraform Destroy VM Only
+      run: terraform destroy -target=azurerm_linux_virtual_machine.petclinic_vm -auto-approve
+      working-directory: terraform/test_vm
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
   
