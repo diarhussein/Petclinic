@@ -31,7 +31,7 @@ locals {
 
 # Create a Storage Account
 resource "azurerm_storage_account" "petclinic" {
-  name                     = "petclinicsaccountproductionvm"
+  name                     = "petsaccproductionvm"
   resource_group_name      = local.resource_group_name
   location                 = local.location
   account_tier             = "Standard"
