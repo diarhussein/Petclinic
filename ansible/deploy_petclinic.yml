@@ -274,6 +274,13 @@
       tags:
         - selenium
 
+    - name: Install unzip utility
+      apt:
+        name: unzip
+        state: present
+      tags:
+        - selenium
+
     - name: Make ChromeDriver executable
       ansible.builtin.file:
         path: /usr/bin/chromedriver
