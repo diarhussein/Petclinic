@@ -283,24 +283,16 @@
     # Execute Selenium tests using Docker
     - name: Execute Selenium test using Python3 on VM
       command:
-        cmd: "python3 /opt/selenium_tests/test_petclinic.py"
+        cmd: "pytest /opt/selenium_tests/test_petclinic.py --junitxml=/opt/selenium_tests/results.xml"
       register: selenium_test_result
 
-    # Assuming the test script outputs results to a file, you can display and fetch them similar to JMeter:
     # Display Selenium test results in pipeline output
     - name: Display Selenium test results
-      command: cat /opt/selenium_tests/results.txt  # Assuming test results are written to this file
+      command: cat /opt/selenium_tests/results.xml  # Assuming test results are written to this file
       register: selenium_output
 
     - debug:
         var: selenium_output.stdout_lines
-
-    # Optional: Fetch Selenium test results to runner
-    - name: Fetch Selenium test results to runner
-      fetch:
-        src: /opt/selenium_tests/results.txt  # Modify if your test results are stored in a different path
-        dest: /home/diarhussein/Downloads/results/selenium_results.txt
-        flat: yes
 
 # Web App Deployment for production VM
 # - name: Deploy Petclinic Web App on Production VM
