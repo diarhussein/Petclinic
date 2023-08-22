@@ -247,7 +247,7 @@
     - name: Download ChromeDriver
       get_url:
         url: "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip"
-        dest: "/tmp/chromedrive-linux64.zip"
+        dest: "/tmp/chromedrive_linux64.zip"
         mode: '0755'
 
     - name: Install unzip utility
@@ -257,7 +257,7 @@
 
     - name: Unzip ChromeDriver
       unarchive:
-        src: "/tmp/chromedriver-linux64.zip"
+        src: "/tmp/chromedriver_linux64.zip"
         dest: "/usr/bin"
         remote_src: yes
 
@@ -271,7 +271,7 @@
 
     - name: Make ChromeDriver executable
       ansible.builtin.file:
-        path: /usr/bin/chromedriver_linux64/chromedriver
+        path: /usr/bin/chromedriver-linux64/chromedriver
         mode: '0755'
 
     # Transfer Selenium test script to VM
