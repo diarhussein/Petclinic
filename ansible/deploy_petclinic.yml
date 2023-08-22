@@ -203,7 +203,7 @@
     - name: Run Docker container
       command:
         cmd: "docker run -d -p 8080:8080 diarhussein/petclinic:{{ docker_tag | default('latest') }}"
-      when: docker_pull.changed
+      when: selenium_docker_pull.changed
 
     # Ensure Selenium test directory exists
     - name: Ensure Selenium tests directory exists
