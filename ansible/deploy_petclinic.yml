@@ -149,7 +149,7 @@
 - name: Execute Selenium tests on Acceptance VM
   hosts: acceptancevm 
   become: yes
-    tags: 
+  tags: 
     - selenium
 
   tasks:
