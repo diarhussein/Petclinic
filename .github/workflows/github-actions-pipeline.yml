@@ -134,11 +134,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # - name: Setup Ansible
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install ansible
-
     - name: Setup SSH Key
       run: |
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
@@ -203,3 +198,72 @@ jobs:
       env:
         ANSIBLE_HOST_KEY_CHECKING: False
       run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags selenium
+
+  # terraform-apply-production-vm:
+  #   needs: ansible-deploy-selenium
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
+
+  #   - name: Terraform Init for Production VM
+  #     run: terraform init
+  #     working-directory: terraform/production_vm
+
+  #   - name: Terraform Plan for Production VM
+  #     run: terraform plan
+  #     working-directory: terraform/production_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+  #   - name: Terraform Apply for Production VM
+  #     run: terraform apply -auto-approve
+  #     working-directory: terraform/production_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+  # ansible-deploy-production-vm:
+  #   needs: terraform-apply-production-vm
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
+  
+  #   - name: Setup SSH Key for Production VM
+  #     run: |
+  #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+  #       chmod 600 ~/.ssh/id_rsa
+  
+  #   - name: Create Ansible Inventory for Production VM
+  #     run: |
+  #       echo "[productionvm]" > inventory
+  #       echo "YOUR_PRODUCTION_VM_IP ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+  
+  #   - name: Execute Ansible Playbook for Production VM Deployment
+  #     env:
+  #       ANSIBLE_HOST_KEY_CHECKING: False
+  #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags webappdeploy
+  
+  # terraform-destroy-testvm:
+  #   needs: ansible-deploy-production-vm
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
+  
+  #   - name: Setup Terraform
+  #     uses: hashicorp/setup-terraform@v1
+  
+  #   - name: Terraform Initialize
+  #     run: terraform init
+  #     working-directory: terraform/test_vm
+  
+  #   - name: Terraform Destroy
+  #     run: terraform destroy -auto-approve
+  #     working-directory: terraform/test_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  
