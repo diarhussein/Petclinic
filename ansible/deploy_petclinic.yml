@@ -147,7 +147,7 @@
 
 # Selenium Tests for acceptance VM
 - name: Execute Selenium tests on Acceptance VM
-  hosts: acceptancevm  # Assuming you've set up 'acceptancevm' in your inventory
+  hosts: acceptancevm 
   become: yes
 
   tasks:
@@ -176,6 +176,16 @@
       tags:
         - selenium
     
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: Start and enable Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+    
     # Pull Docker image for Selenium tests
     - name: Pull Docker image for Selenium tests
       command:
@@ -183,6 +193,23 @@
       register: selenium_docker_pull
       tags:
         - selenium
+
+    - name: Check if container is already running
+      command:
+        cmd: "docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      register: container_running
+      changed_when: false
+      ignore_errors: true
+
+    - name: Stop and remove container if it's running
+      shell:
+        cmd: "docker rm -f $(docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }})"
+      when: container_running.stdout != ""
+
+    - name: Run Docker container
+      command:
+        cmd: "docker run -d -p 8080:8080 diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      when: docker_pull.changed
 
     # Ensure Selenium test directory exists
     - name: Ensure Selenium tests directory exists
@@ -245,13 +272,6 @@
       tags:
         - selenium
 
-    - name: Install unzip utility
-      apt:
-        name: unzip
-        state: present
-      tags:
-        - selenium
-
     - name: Unzip ChromeDriver
       unarchive:
         src: "/tmp/chromedriver_linux64.zip"
@@ -260,9 +280,16 @@
       tags:
         - selenium
 
+    - name: Install unzip utility
+      apt:
+        name: unzip
+        state: present
+      tags:
+        - selenium
+
     - name: Make ChromeDriver executable
       ansible.builtin.file:
-        path: /usr/bin/chromedriver_linux64/chromedriver
+        path: /usr/bin/chromedriver
         mode: '0755'
       tags:
         - selenium
