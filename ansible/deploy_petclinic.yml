@@ -229,6 +229,11 @@
         name: selenium
         executable: pip3
 
+    - name: Install pytest Python package
+      pip:
+        name: pytest
+        executable: pip3
+
     - name: Add Google Chrome's official APT key
       apt_key:
         url: https://dl.google.com/linux/linux_signing_key.pub
