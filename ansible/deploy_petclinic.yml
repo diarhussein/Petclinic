@@ -149,6 +149,8 @@
 - name: Execute Selenium tests on Acceptance VM
   hosts: acceptancevm 
   become: yes
+    tags: 
+    - selenium
 
   tasks:
     # Add Docker GPG apt Key (if not added in a previous step)
@@ -156,16 +158,12 @@
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
-      tags:
-        - selenium
 
     # Add Docker Repository (if not added in a previous step)
     - name: Add Docker Repository for Selenium tests
       apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu focal stable
         state: present
-      tags:
-        - selenium
     
     # Install Docker CE
     - name: Update apt and install docker-ce for Selenium tests
@@ -173,8 +171,6 @@
         name: docker-ce
         state: latest
         update_cache: true
-      tags:
-        - selenium
     
     - name: Install Docker Module for Python
       pip:
@@ -191,8 +187,6 @@
       command:
         cmd: "docker pull diarhussein/petclinic:{{ docker_tag | default('latest') }}"
       register: selenium_docker_pull
-      tags:
-        - selenium
 
     - name: Check if container is already running
       command:
@@ -217,75 +211,55 @@
         path: /opt/selenium_tests
         state: directory
         mode: '0755'
-      tags: 
-        - selenium
 
     - name: Ensure Python3 is installed on the VM
       apt:
         name: python3
         state: latest
         update_cache: yes
-      tags:
-        - selenium
 
     - name: Ensure pip3 is installed
       apt:
         name: python3-pip
         state: latest
         update_cache: yes
-      tags:
-        - selenium
 
     - name: Install selenium Python package
       pip:
         name: selenium
         executable: pip3
-      tags:
-        - selenium
 
     - name: Add Google Chrome's official APT key
       apt_key:
         url: https://dl.google.com/linux/linux_signing_key.pub
         state: present
-      tags:
-        - selenium
 
     - name: Add Google Chrome's official APT repo
       apt_repository:
         repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
         state: present
-      tags:
-        - selenium
 
     - name: Install Google Chrome
       apt:
         name: google-chrome-stable
         state: present
-      tags:
-        - selenium
 
     - name: Download ChromeDriver
       get_url:
         url: "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip"
         dest: "/tmp/chromedriver_linux64.zip"
         mode: '0755'
-      tags:
-        - selenium
 
     - name: Install unzip utility
       apt:
         name: unzip
         state: present
-      tags:
-        - selenium
 
     - name: Unzip ChromeDriver
       unarchive:
         src: "/tmp/chromedriver_linux64.zip"
         dest: "/usr/bin"
         remote_src: yes
-      tags:
-        - selenium
 
     - name: List files in /usr/bin
       command: ls /usr/bin
@@ -299,37 +273,27 @@
       ansible.builtin.file:
         path: /usr/bin/chromedriver_linux64/chromedriver
         mode: '0755'
-      tags:
-        - selenium
 
     # Transfer Selenium test script to VM
     - name: Transfer Selenium test script to VM
       ansible.builtin.copy:
         src: /home/diarhussein/Downloads/devoteam-traineeship-petclinic/test_petclinic.py
         dest: /opt/selenium_tests/test_petclinic.py
-      tags: 
-        - selenium
 
     # Execute Selenium tests using Docker
     - name: Execute Selenium test using Python3 on VM
       command:
         cmd: "python3 /opt/selenium_tests/test_petclinic.py"
       register: selenium_test_result
-      tags:
-        - selenium
 
     # Assuming the test script outputs results to a file, you can display and fetch them similar to JMeter:
     # Display Selenium test results in pipeline output
     - name: Display Selenium test results
       command: cat /opt/selenium_tests/results.txt  # Assuming test results are written to this file
       register: selenium_output
-      tags:
-        - selenium
 
     - debug:
         var: selenium_output.stdout_lines
-      tags:
-        - selenium
 
     # Optional: Fetch Selenium test results to runner
     - name: Fetch Selenium test results to runner
@@ -337,5 +301,3 @@
         src: /opt/selenium_tests/results.txt  # Modify if your test results are stored in a different path
         dest: /home/diarhussein/Downloads/results/selenium_results.txt
         flat: yes
-      tags:
-        - selenium
