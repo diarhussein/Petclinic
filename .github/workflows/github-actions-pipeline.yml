@@ -199,30 +199,30 @@ jobs:
         ANSIBLE_HOST_KEY_CHECKING: False
       run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags selenium
 
-  # terraform-apply-production-vm:
-  #   needs: ansible-deploy-selenium
-  #   runs-on: self-hosted
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v2
+  terraform-apply-production-vm:
+    needs: ansible-deploy-selenium
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-  #   - name: Terraform Init for Production VM
-  #     run: terraform init
-  #     working-directory: terraform/production_vm
+    - name: Terraform Init for Production VM
+      run: terraform init
+      working-directory: terraform/production_vm
 
-  #   - name: Terraform Plan for Production VM
-  #     run: terraform plan
-  #     working-directory: terraform/production_vm
-  #     env:
-  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+    - name: Terraform Plan for Production VM
+      run: terraform plan
+      working-directory: terraform/production_vm
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-  #   - name: Terraform Apply for Production VM
-  #     run: terraform apply -auto-approve
-  #     working-directory: terraform/production_vm
-  #     env:
-  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+    - name: Terraform Apply for Production VM
+      run: terraform apply -auto-approve
+      working-directory: terraform/production_vm
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
   # ansible-deploy-production-vm:
   #   needs: terraform-apply-production-vm
@@ -239,7 +239,7 @@ jobs:
   #   - name: Create Ansible Inventory for Production VM
   #     run: |
   #       echo "[productionvm]" > inventory
-  #       echo "YOUR_PRODUCTION_VM_IP ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+  #       echo "20.160.114.183 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
   
   #   - name: Execute Ansible Playbook for Production VM Deployment
   #     env:

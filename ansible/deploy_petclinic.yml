@@ -266,12 +266,12 @@
         dest: "/usr/bin"
         remote_src: yes
 
-    - name: List files in /usr/bin
-      command: ls /usr/bin
-      register: bin_contents
+    # - name: List files in /usr/bin
+    #   command: ls /usr/bin
+    #   register: bin_contents
 
-    - debug:
-        var: bin_contents.stdout_lines
+    # - debug:
+    #     var: bin_contents.stdout_lines
 
 
     - name: Make ChromeDriver executable
@@ -299,59 +299,59 @@
     - debug:
         var: selenium_output.stdout_lines
 
-# Web App Deployment for production VM
-# - name: Deploy Petclinic Web App on Production VM
-#   hosts: productionvm 
-#   become: yes
-#   tags: 
-#     - webappdeploy
+Web App Deployment for production VM
+- name: Deploy Petclinic Web App on Production VM
+  hosts: productionvm 
+  become: yes
+  tags: 
+    - webappdeploy
 
-#   tasks:
+  tasks:
     
-#     - name: Add Docker GPG apt Key
-#       apt_key:
-#         url: https://download.docker.com/linux/ubuntu/gpg
-#         state: present
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
 
-#     - name: Add Docker Repository
-#       apt_repository:
-#         repo: deb https://download.docker.com/linux/ubuntu focal stable
-#         state: present
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
 
-#     - name: Update apt and install docker-ce
-#       apt:
-#         name: docker-ce
-#         state: latest
-#         update_cache: true
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
 
-#     - name: Install Docker Module for Python
-#       pip:
-#         name: docker
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
 
-#     - name: Start and enable Docker service
-#       ansible.builtin.service:
-#         name: docker
-#         state: started
-#         enabled: yes
+    - name: Start and enable Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
 
-#     - name: Pull Docker image
-#       command:
-#         cmd: "docker pull diarhussein/petclinic:{{ docker_tag | default('latest') }}"
-#       register: docker_pull
+    - name: Pull Docker image
+      command:
+        cmd: "docker pull diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      register: docker_pull
 
-#     - name: Check if container is already running
-#       command:
-#         cmd: "docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
-#       register: container_running
-#       changed_when: false
-#       ignore_errors: true
+    - name: Check if container is already running
+      command:
+        cmd: "docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      register: container_running
+      changed_when: false
+      ignore_errors: true
 
-#     - name: Stop and remove container if it's running
-#       shell:
-#         cmd: "docker rm -f $(docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }})"
-#       when: container_running.stdout != ""
+    - name: Stop and remove container if it's running
+      shell:
+        cmd: "docker rm -f $(docker ps -q --filter ancestor=diarhussein/petclinic:{{ docker_tag | default('latest') }})"
+      when: container_running.stdout != ""
 
-#     - name: Run Docker container
-#       command:
-#         cmd: "docker run -d -p 8080:8080 diarhussein/petclinic:{{ docker_tag | default('latest') }}"
-#       when: docker_pull.changed
+    - name: Run Docker container
+      command:
+        cmd: "docker run -d -p 8080:8080 diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+      when: docker_pull.changed
