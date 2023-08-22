@@ -113,5 +113,66 @@ resource "azurerm_linux_virtual_machine" "petclinic_vm" {
   }
 }
 
+# ... [Your previous code remains unchanged]
+
+# Create a Storage Account
+resource "azurerm_storage_account" "petclinic" {
+  # ... [Your previous code remains unchanged]
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Create a Storage Container
+resource "azurerm_storage_container" "petclinic" {
+  # ... [Your previous code remains unchanged]
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Create a Virtual Network
+resource "azurerm_virtual_network" "petclinic_vnet" {
+  # ... [Your previous code remains unchanged]
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Create a Subnet
+resource "azurerm_subnet" "petclinic_subnet" {
+  # ... [Your previous code remains unchanged]
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Create a Public IP Address
+resource "azurerm_public_ip" "petclinic_public_ip" {
+  # ... [Your previous code remains unchanged]
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Create a Network Interface
+resource "azurerm_network_interface" "petclinic_NIC" {
+  # ... [Your previous code remains unchanged]
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Create a Virtual Machine
+resource "azurerm_linux_virtual_machine" "petclinic_vm" {
+  # ... [Your previous code remains unchanged]
+  # No lifecycle block added here since you requested to exclude the VM
+}
 
 
