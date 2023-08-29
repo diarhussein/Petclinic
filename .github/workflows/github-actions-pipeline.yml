@@ -264,4 +264,30 @@ jobs:
         TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
+  terraform-apply-elk-vm:
+    needs: terraform-destroy-testvm
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Terraform Init for ELK VM
+      run: terraform init
+      working-directory: terraform/elk_vm  
+
+    - name: Terraform Plan for ELK VM
+      run: terraform plan
+      working-directory: terraform/elk_vm
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+    - name: Terraform Apply for ELK VM
+      run: terraform apply -auto-approve
+      working-directory: terraform/elk_vm
+      env:
+        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+
   

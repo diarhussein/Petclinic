@@ -330,6 +330,58 @@
         state: present
         update_cache: yes
 
+    # ... (existing tasks)
+
+    - name: Download and install Filebeat
+      command:
+        cmd: "curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.14.0-amd64.deb"
+      args:
+        creates: "filebeat-7.14.0-amd64.deb"
+
+    - name: Install Filebeat
+      apt:
+        deb: filebeat-7.14.0-amd64.deb
+
+    - name: Download and install Metricbeat
+      command:
+        cmd: "curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.14.0-amd64.deb"
+      args:
+        creates: "metricbeat-7.14.0-amd64.deb"
+
+    - name: Install Metricbeat
+      apt:
+        deb: metricbeat-7.14.0-amd64.deb
+
+    - name: Place Filebeat configuration
+      copy:
+        src: /home/diarhussein/Downloads/Beats/filebeat.yml
+        dest: /etc/filebeat/filebeat.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Place Metricbeat configuration
+      copy:
+        src: /home/diarhussein/Downloads/Beats/metricbeat.yml
+        dest: /etc/metricbeat/metricbeat.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Enable and start Filebeat service
+      ansible.builtin.service:
+        name: filebeat
+        state: started
+        enabled: yes
+
+    - name: Enable and start Metricbeat service
+      ansible.builtin.service:
+        name: metricbeat
+        state: started
+        enabled: yes
+
+    # ... (existing tasks for Docker container setup)
+
     - name: Install Docker Module for Python
       pip:
         name: docker
@@ -360,5 +412,5 @@
 
     - name: Run Docker container
       command:
-        cmd: "docker run -d -p 8080:8080 diarhussein/petclinic:{{ docker_tag | default('latest') }}"
+        cmd: "docker run -d -p 8080:8080 -v /usr/local/tomcat/logs:/usr/local/tomcat/logs diarhussein/petclinic:{{ docker_tag | default('latest') }}"
       when: docker_pull.changed
