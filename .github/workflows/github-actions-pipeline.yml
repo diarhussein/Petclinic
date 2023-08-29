@@ -289,5 +289,26 @@ jobs:
         TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
         TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
+  ansible-deploy-elkvm:
+    needs: terraform-apply-elk-vm 
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup SSH Key for ELK VM
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+    - name: Create Ansible Inventory for ELK VM
+      run: |
+        echo "[elkvm]" > inventory
+        echo "108.142.168.123 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+
+    - name: Execute Ansible Playbook for ELK VM Deployment
+      env:
+        ANSIBLE_HOST_KEY_CHECKING: False
+      run: ansible-playbook -i inventory ansible/YOUR_ELK_PLAYBOOK.yml --private-key=~/.ssh/id_rsa --tags monitoring
 
   

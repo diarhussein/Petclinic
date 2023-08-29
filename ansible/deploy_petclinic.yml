@@ -414,3 +414,77 @@
       command:
         cmd: "docker run -d -p 8080:8080 -v /usr/local/tomcat/logs:/usr/local/tomcat/logs diarhussein/petclinic:{{ docker_tag | default('latest') }}"
       when: docker_pull.changed
+
+- name: Install ELK Stack 7.14.0 on VM and run
+  hosts: elkvm
+  become: yes
+  tags: 
+    - monitoring
+
+  tasks:
+    - name: Import Elasticsearch APT Key
+      apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+
+    - name: Add Elasticsearch APT Repository
+      apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+        state: present
+
+    - name: Update APT Cache
+      apt:
+        update_cache: yes
+
+    - name: Install Elasticsearch 7.14.0
+      apt:
+        name: "elasticsearch=7.14.0"
+        state: present
+
+    - name: Enable and Start Elasticsearch Service
+      systemd:
+        name: elasticsearch
+        enabled: yes
+        state: started
+
+    - name: Install Kibana 7.14.0
+      apt:
+        name: "kibana=7.14.0"
+        state: present
+
+    - name: Enable and Start Kibana Service
+      systemd:
+        name: kibana
+        enabled: yes
+        state: started
+
+    - name: Install Logstash 7.14.0
+      apt:
+        name: "logstash=7.14.0"
+        state: present
+
+    - name: Enable and Start Logstash Service
+      systemd:
+        name: logstash
+        enabled: yes
+        state: started
+
+    - name: Set up Logstash Config
+      copy:
+        content: |
+          input {
+            beats {
+              port => 5044
+            }
+          }
+          output {
+            elasticsearch {
+              hosts => ["localhost:9200"]
+            }
+          }
+        dest: /etc/logstash/conf.d/logstash.conf
+
+    - name: Restart Logstash to apply new config
+      systemd:
+        name: logstash
+        state: restarted
