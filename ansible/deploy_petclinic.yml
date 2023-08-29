@@ -458,10 +458,12 @@
         enabled: yes
         state: started
 
-    - name: Install Logstash 7.14.0
-      apt:
-        name: "logstash=7.14.0"
-        state: present
+  - name: Install Logstash
+    apt:
+      name: "logstash={{ 7.17.12 }}"
+      update_cache: yes
+    vars:
+      logstash_version: "7.17.12"
 
     - name: Enable and Start Logstash Service
       systemd:
