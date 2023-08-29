@@ -8,264 +8,264 @@ on:
     - cron: '10 12 * * *'
 
 jobs:
-  mvn-build:
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Build with Maven
-      run: mvn clean package -DartifactVersion=${{ github.run_number }}
-
-  mvn-test:
-    needs: mvn-build
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Run Maven Tests
-      run: mvn test -DartifactVersion=${{ github.run_number }}
-
-  deploy-nexus-github:
-    needs: mvn-test
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Deploy to Nexus
-      run: |
-        mvn deploy -Dmaven.deploy.skip=true -DartifactVersion=${{ github.run_number }}
-        mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=${{ github.workspace }}/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=${{ github.run_number }} -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
-
-    - name: Deploy WAR to GitHub Repository
-      run: |
-        git config user.name "diarhussein"
-        git config user.email "diar.hussein@devoteam.com"
-        git checkout master
-        git add warfiles/petclinic.war
-        
-        # Check for changes
-        if ! git diff --cached --quiet; then
-          git commit -m "Deploying WAR file from build ${{ github.run_number }}"
-          git push https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/diarhussein/Petclinic.git
-        else
-          echo "No changes to commit"
-        fi
-
-  # jmeter-test:
-  #   needs: deploy-nexus-github
-  #   runs-on: self-hosted
-  #   steps:
-  #   - name: Run JMeter Tests
-  #     run: /home/diarhussein/Downloads/apache-jmeter-5.6.2/bin/jmeter -n -t /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
-
-  #   - name: Publish JMeter Test Results
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: jmeter-tests
-  #       path: '**/TEST-*.xml'
-
-  # selenium-test:
-  #   needs: jmeter-test
+  # mvn-build:
   #   runs-on: self-hosted
   #   steps:
   #   - name: Checkout code
   #     uses: actions/checkout@v2
 
-  #   - name: Install Selenium
-  #     run: pip install selenium
+  #   - name: Build with Maven
+  #     run: mvn clean package -DartifactVersion=${{ github.run_number }}
 
-  #   - name: Execute Selenium Tests
-  #     run: python /home/diarhussein/Downloads/devoteam-traineeship-petclinic/test_petclinic.py
+  # mvn-test:
+  #   needs: mvn-build
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
+
+  #   - name: Run Maven Tests
+  #     run: mvn test -DartifactVersion=${{ github.run_number }}
+
+  # deploy-nexus-github:
+  #   needs: mvn-test
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
+
+  #   - name: Deploy to Nexus
+  #     run: |
+  #       mvn deploy -Dmaven.deploy.skip=true -DartifactVersion=${{ github.run_number }}
+  #       mvn deploy:deploy-file -Durl=http://localhost:8081/repository/maven-releases/ -DrepositoryId=maven-releases -Dfile=${{ github.workspace }}/warfiles/petclinic.war -DgroupId=org.springframework.samples -DartifactId=spring-framework-petclinic -Dversion=${{ github.run_number }} -Dpackaging=war -DgeneratePom=false -DuniqueVersion=false
+
+  #   - name: Deploy WAR to GitHub Repository
+  #     run: |
+  #       git config user.name "diarhussein"
+  #       git config user.email "diar.hussein@devoteam.com"
+  #       git checkout master
+  #       git add warfiles/petclinic.war
+        
+  #       # Check for changes
+  #       if ! git diff --cached --quiet; then
+  #         git commit -m "Deploying WAR file from build ${{ github.run_number }}"
+  #         git push https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/diarhussein/Petclinic.git
+  #       else
+  #         echo "No changes to commit"
+  #       fi
+
+  # # jmeter-test:
+  # #   needs: deploy-nexus-github
+  # #   runs-on: self-hosted
+  # #   steps:
+  # #   - name: Run JMeter Tests
+  # #     run: /home/diarhussein/Downloads/apache-jmeter-5.6.2/bin/jmeter -n -t /home/diarhussein/Downloads/devoteam-traineeship-petclinic/src/test/jmeter/JMetertest.jmx
+
+  # #   - name: Publish JMeter Test Results
+  # #     uses: actions/upload-artifact@v2
+  # #     with:
+  # #       name: jmeter-tests
+  # #       path: '**/TEST-*.xml'
+
+  # # selenium-test:
+  # #   needs: jmeter-test
+  # #   runs-on: self-hosted
+  # #   steps:
+  # #   - name: Checkout code
+  # #     uses: actions/checkout@v2
+
+  # #   - name: Install Selenium
+  # #     run: pip install selenium
+
+  # #   - name: Execute Selenium Tests
+  # #     run: python /home/diarhussein/Downloads/devoteam-traineeship-petclinic/test_petclinic.py
 
 
-  docker-build-push:
-    needs: deploy-nexus-github
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # docker-build-push:
+  #   needs: deploy-nexus-github
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Build Docker image
-      run: |
-        docker build -t diarhussein/petclinic:${{ github.run_number }} .
-        docker tag diarhussein/petclinic:${{ github.run_number }} diarhussein/petclinic:latest
+  #   - name: Build Docker image
+  #     run: |
+  #       docker build -t diarhussein/petclinic:${{ github.run_number }} .
+  #       docker tag diarhussein/petclinic:${{ github.run_number }} diarhussein/petclinic:latest
 
-    - name: Login to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+  #   - name: Login to Docker Hub
+  #     run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Push Docker image to Docker Hub
-      run: |
-        docker push diarhussein/petclinic:${{ github.run_number }}
-        docker push diarhussein/petclinic:latest
+  #   - name: Push Docker image to Docker Hub
+  #     run: |
+  #       docker push diarhussein/petclinic:${{ github.run_number }}
+  #       docker push diarhussein/petclinic:latest
 
 
-  terraform-apply-test-vm:
-    needs: docker-build-push
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # terraform-apply-test-vm:
+  #   needs: docker-build-push
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Terraform Init for Test VM
-      run: terraform init
-      working-directory: terraform/test_vm
+  #   - name: Terraform Init for Test VM
+  #     run: terraform init
+  #     working-directory: terraform/test_vm
 
-    - name: Terraform Plan for Test VM
-      run: terraform plan
-      working-directory: terraform/test_vm
-      env:
-        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  #   - name: Terraform Plan for Test VM
+  #     run: terraform plan
+  #     working-directory: terraform/test_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-    - name: Terraform Apply for Test VM
-      run: terraform apply -auto-approve
-      working-directory: terraform/test_vm
-      env:
-        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  #   - name: Terraform Apply for Test VM
+  #     run: terraform apply -auto-approve
+  #     working-directory: terraform/test_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-  ansible-deploy-jmeter:
-    needs: terraform-apply-test-vm
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # ansible-deploy-jmeter:
+  #   needs: terraform-apply-test-vm
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Setup SSH Key
-      run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+  #   - name: Setup SSH Key
+  #     run: |
+  #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+  #       chmod 600 ~/.ssh/id_rsa
 
-    - name: Create Ansible Inventory
-      run: |
-        echo "[testvm]" > inventory
-        echo "4.180.200.92 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+  #   - name: Create Ansible Inventory
+  #     run: |
+  #       echo "[testvm]" > inventory
+  #       echo "4.180.200.92 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
 
-    - name: Create directory for JMeter results on runner
-      run: mkdir -p ./jmeter_results/
+  #   - name: Create directory for JMeter results on runner
+  #     run: mkdir -p ./jmeter_results/
 
-    - name: Execute Ansible Playbook for JMeter tests
-      env:
-        ANSIBLE_HOST_KEY_CHECKING: False
-      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags jmeter
+  #   - name: Execute Ansible Playbook for JMeter tests
+  #     env:
+  #       ANSIBLE_HOST_KEY_CHECKING: False
+  #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags jmeter
 
-  terraform-apply-acceptance-vm:
-    needs: ansible-deploy-jmeter
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # terraform-apply-acceptance-vm:
+  #   needs: ansible-deploy-jmeter
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Terraform Init for Acceptance VM
-      run: terraform init
-      working-directory: terraform/acceptance_vm
+  #   - name: Terraform Init for Acceptance VM
+  #     run: terraform init
+  #     working-directory: terraform/acceptance_vm
 
-    - name: Terraform Plan for Acceptance VM
-      run: terraform plan
-      working-directory: terraform/acceptance_vm
-      env:
-        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  #   - name: Terraform Plan for Acceptance VM
+  #     run: terraform plan
+  #     working-directory: terraform/acceptance_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-    - name: Terraform Apply for Acceptance VM
-      run: terraform apply -auto-approve
-      working-directory: terraform/acceptance_vm
-      env:
-        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  #   - name: Terraform Apply for Acceptance VM
+  #     run: terraform apply -auto-approve
+  #     working-directory: terraform/acceptance_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-  ansible-deploy-selenium:
-    needs: terraform-apply-acceptance-vm
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # ansible-deploy-selenium:
+  #   needs: terraform-apply-acceptance-vm
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Setup SSH Key for Acceptance VM
-      run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+  #   - name: Setup SSH Key for Acceptance VM
+  #     run: |
+  #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+  #       chmod 600 ~/.ssh/id_rsa
 
-    - name: Create Ansible Inventory for Acceptance VM
-      run: |
-        echo "[acceptancevm]" > inventory
-        echo "20.16.255.226 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+  #   - name: Create Ansible Inventory for Acceptance VM
+  #     run: |
+  #       echo "[acceptancevm]" > inventory
+  #       echo "20.16.255.226 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
 
-    - name: Execute Ansible Playbook for Selenium Tests
-      env:
-        ANSIBLE_HOST_KEY_CHECKING: False
-      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags selenium
+  #   - name: Execute Ansible Playbook for Selenium Tests
+  #     env:
+  #       ANSIBLE_HOST_KEY_CHECKING: False
+  #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags selenium
 
-  terraform-apply-production-vm:
-    needs: ansible-deploy-selenium
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # terraform-apply-production-vm:
+  #   needs: ansible-deploy-selenium
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Terraform Init for Production VM
-      run: terraform init
-      working-directory: terraform/production_vm
+  #   - name: Terraform Init for Production VM
+  #     run: terraform init
+  #     working-directory: terraform/production_vm
 
-    - name: Terraform Plan for Production VM
-      run: terraform plan
-      working-directory: terraform/production_vm
-      env:
-        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  #   - name: Terraform Plan for Production VM
+  #     run: terraform plan
+  #     working-directory: terraform/production_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-    - name: Terraform Apply for Production VM
-      run: terraform apply -auto-approve
-      working-directory: terraform/production_vm
-      env:
-        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  #   - name: Terraform Apply for Production VM
+  #     run: terraform apply -auto-approve
+  #     working-directory: terraform/production_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
-  ansible-deploy-production-vm:
-    needs: terraform-apply-production-vm
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # ansible-deploy-production-vm:
+  #   needs: terraform-apply-production-vm
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
   
-    - name: Setup SSH Key for Production VM
-      run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+  #   - name: Setup SSH Key for Production VM
+  #     run: |
+  #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+  #       chmod 600 ~/.ssh/id_rsa
   
-    - name: Create Ansible Inventory for Production VM
-      run: |
-        echo "[productionvm]" > inventory
-        echo "20.160.114.183 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
+  #   - name: Create Ansible Inventory for Production VM
+  #     run: |
+  #       echo "[productionvm]" > inventory
+  #       echo "20.160.114.183 ansible_ssh_user=Diar ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory
   
-    - name: Execute Ansible Playbook for Production VM Deployment
-      env:
-        ANSIBLE_HOST_KEY_CHECKING: False
-      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags webappdeploy
+  #   - name: Execute Ansible Playbook for Production VM Deployment
+  #     env:
+  #       ANSIBLE_HOST_KEY_CHECKING: False
+  #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags webappdeploy
   
-  terraform-destroy-testvm:
-    needs: ansible-deploy-production-vm
-    runs-on: self-hosted
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # terraform-destroy-testvm:
+  #   needs: ansible-deploy-production-vm
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Terraform Initialize
-      run: terraform init
-      working-directory: terraform/test_vm
+  #   - name: Terraform Initialize
+  #     run: terraform init
+  #     working-directory: terraform/test_vm
 
-    - name: Terraform Destroy VM Only
-      run: terraform destroy -target=azurerm_linux_virtual_machine.petclinic_vm -auto-approve
-      working-directory: terraform/test_vm
-      env:
-        TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
-        TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+  #   - name: Terraform Destroy VM Only
+  #     run: terraform destroy -target=azurerm_linux_virtual_machine.petclinic_vm -auto-approve
+  #     working-directory: terraform/test_vm
+  #     env:
+  #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
+  #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
   terraform-apply-elk-vm:
-    needs: terraform-destroy-testvm
+    # needs: terraform-destroy-testvm
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -309,6 +309,6 @@ jobs:
     - name: Execute Ansible Playbook for ELK VM Deployment
       env:
         ANSIBLE_HOST_KEY_CHECKING: False
-      run: ansible-playbook -i inventory ansible/YOUR_ELK_PLAYBOOK.yml --private-key=~/.ssh/id_rsa --tags monitoring
+      run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags monitoring
 
   
