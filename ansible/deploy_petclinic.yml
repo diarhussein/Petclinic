@@ -460,10 +460,8 @@
 
     - name: Install Logstash
       apt:
-        name: "logstash={{ 7.17.12 }}"
+        name: logstash
         update_cache: yes
-      vars:
-        logstash_version: "7.17.12"
 
     - name: Enable and Start Logstash Service
       systemd:
