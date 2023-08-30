@@ -332,25 +332,25 @@
 
     # ... (existing tasks)
 
-    - name: Download and install Filebeat
-      command:
-        cmd: "curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.14.0-amd64.deb"
-      args:
-        creates: "filebeat-7.14.0-amd64.deb"
+    # - name: Download and install Filebeat
+    #   command:
+    #     cmd: "curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.14.0-amd64.deb"
+    #   args:
+    #     creates: "filebeat-7.14.0-amd64.deb"
 
-    - name: Install Filebeat
-      apt:
-        deb: filebeat-7.14.0-amd64.deb
+    # - name: Install Filebeat
+    #   apt:
+    #     deb: filebeat-7.14.0-amd64.deb
 
-    - name: Download and install Metricbeat
-      command:
-        cmd: "curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.14.0-amd64.deb"
-      args:
-        creates: "metricbeat-7.14.0-amd64.deb"
+    # - name: Download and install Metricbeat
+    #   command:
+    #     cmd: "curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.14.0-amd64.deb"
+    #   args:
+    #     creates: "metricbeat-7.14.0-amd64.deb"
 
-    - name: Install Metricbeat
-      apt:
-        deb: metricbeat-7.14.0-amd64.deb
+    # - name: Install Metricbeat
+    #   apt:
+    #     deb: metricbeat-7.14.0-amd64.deb
 
     - name: Place Filebeat configuration
       copy:
