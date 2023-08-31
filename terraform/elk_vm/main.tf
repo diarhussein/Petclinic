@@ -104,7 +104,7 @@ resource "azurerm_linux_virtual_machine" "petclinic_vm" {
   name                = "PetclinicVMelkVM"
   resource_group_name = local.resource_group_name
   location            = local.location
-  size                = "Standard_DS1_v2"
+  size                = "Standard_DS2_v3"
   
   admin_username      = var.admin_username
   admin_ssh_key {
