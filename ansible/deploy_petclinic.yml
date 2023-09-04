@@ -454,6 +454,6 @@
         enabled: yes
         state: started
 
-    - name: Run Logstash with sample config
-      command:
-        cmd: sudo /usr/share/logstash/bin/logstash -f /etc/logstash/logstash-sample.conf
+    # - name: Run Logstash with sample config
+    #   command:
+    #     cmd: sudo /usr/share/logstash/bin/logstash -f /etc/logstash/logstash-sample.conf
