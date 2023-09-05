@@ -21,19 +21,31 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
     - name: Build with Maven
       run: mvn clean package -DartifactVersion=${{ github.run_number }}
-
-    - name: Send SMS notification via Twilio
+      
+    - name: Build and analyze
       env:
-        TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-        TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-      run: |
-        curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
-        --data-urlencode "Body=The build was successful." \
-        --data-urlencode "From=+12565883957" \
-        --data-urlencode "To=+31641314309" \
-        -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The build was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
 
   # mvn-test:
   #   needs: mvn-build
@@ -51,6 +63,17 @@ jobs:
 
   #   - name: Run Maven Tests
   #     run: mvn test -DartifactVersion=${{ github.run_number }}
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The test was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
 
 
   # deploy-nexus-github:
@@ -79,6 +102,18 @@ jobs:
   #       else
   #         echo "No changes to commit"
   #       fi
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The war deployment was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+
 
   # # jmeter-test:
   # #   needs: deploy-nexus-github
@@ -127,6 +162,17 @@ jobs:
   #       docker push diarhussein/petclinic:${{ github.run_number }}
   #       docker push diarhussein/petclinic:latest
 
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The docker build/push was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+  
 
   # terraform-apply-test-vm:
   #   needs: docker-build-push
@@ -153,6 +199,18 @@ jobs:
   #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
   #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The tf apply for the test vm was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+  
+
   # ansible-deploy-jmeter:
   #   needs: terraform-apply-test-vm
   #   runs-on: self-hosted
@@ -177,6 +235,17 @@ jobs:
   #     env:
   #       ANSIBLE_HOST_KEY_CHECKING: False
   #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags jmeter
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The ansible deploy (jmeter) was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
 
   # terraform-apply-acceptance-vm:
   #   needs: ansible-deploy-jmeter
@@ -203,6 +272,18 @@ jobs:
   #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
   #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The tf apply for the acceptance vm was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+  
+
   # ansible-deploy-selenium:
   #   needs: terraform-apply-acceptance-vm
   #   runs-on: self-hosted
@@ -224,6 +305,18 @@ jobs:
   #     env:
   #       ANSIBLE_HOST_KEY_CHECKING: False
   #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags selenium
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The ansible (deploy) was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+
 
   # terraform-apply-production-vm:
   #   needs: ansible-deploy-selenium
@@ -250,6 +343,18 @@ jobs:
   #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
   #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The tf apply for the production vm was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+  
+
   # ansible-deploy-production-vm:
   #   needs: terraform-apply-production-vm
   #   runs-on: self-hosted
@@ -271,7 +376,18 @@ jobs:
   #     env:
   #       ANSIBLE_HOST_KEY_CHECKING: False
   #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags webappdeploy
-  
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The ansible deploy (production) was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+
   # terraform-destroy-testvm:
   #   needs: ansible-deploy-production-vm
   #   runs-on: self-hosted
@@ -289,6 +405,18 @@ jobs:
   #     env:
   #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
   #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The tf destroy (testvm) was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+  
 
   # # terraform-apply-elk-vm:
   # #   needs: terraform-destroy-testvm
@@ -315,6 +443,17 @@ jobs:
   # #       TF_VAR_admin_username: ${{ secrets.TF_ADMIN_USERNAME }}
   # #       TF_VAR_admin_password: ${{ secrets.TF_ADMIN_PASSWORD }}
 
+  # #   # - name: Send SMS notification via Twilio
+  # #   #   env:
+  # #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  # #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  # #   #   run: |
+  # #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  # #   #     --data-urlencode "Body=The tf apply for the elk vm was successful." \
+  # #   #     --data-urlencode "From=+12565883957" \
+  # #   #     --data-urlencode "To=+31641314309" \
+  # #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+
   # ansible-deploy-elkvm:
   #   needs: terraform-destroy-testvm
   #   runs-on: self-hosted
@@ -336,5 +475,17 @@ jobs:
   #     env:
   #       ANSIBLE_HOST_KEY_CHECKING: False
   #     run: ansible-playbook -i inventory ansible/deploy_petclinic.yml --private-key=~/.ssh/id_rsa --tags monitoring
+
+  #   # - name: Send SMS notification via Twilio
+  #   #   env:
+  #   #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  #   #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  #   #   run: |
+  #   #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+  #   #     --data-urlencode "Body=The ansible deploy (elk) was successful." \
+  #   #     --data-urlencode "From=+12565883957" \
+  #   #     --data-urlencode "To=+31641314309" \
+  #   #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+
 
   
