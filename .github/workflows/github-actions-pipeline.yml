@@ -1,4 +1,4 @@
-name: CI/CD Pipelinee
+name: CI/CD Pipeline
 
 on:
   push:
@@ -14,6 +14,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
     - name: Build with Maven
       run: mvn clean package -DartifactVersion=${{ github.run_number }}
 
@@ -24,8 +31,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
     - name: Run Maven Tests
       run: mvn test -DartifactVersion=${{ github.run_number }}
+
 
   deploy-nexus-github:
     needs: mvn-test
