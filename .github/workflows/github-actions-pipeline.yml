@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipelinee
 
 on:
   push:
@@ -36,16 +36,16 @@ jobs:
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'
 
-    - name: Send SMS notification via Twilio
-      env:
-        TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-        TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-      run: |
-        curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
-        --data-urlencode "Body=The build was successful." \
-        --data-urlencode "From=+12565883957" \
-        --data-urlencode "To=+31641314309" \
-        -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+    # - name: Send SMS notification via Twilio
+    #   env:
+    #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+    #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+    #   run: |
+    #     curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json \
+    #     --data-urlencode "Body=The build was successful." \
+    #     --data-urlencode "From=+12565883957" \
+    #     --data-urlencode "To=+31641314309" \
+    #     -u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
 
   mvn-test:
     needs: mvn-build
